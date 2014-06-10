@@ -1,9 +1,11 @@
 Positronic Brain
 ================
 
+*Opinionated BuildBot workflow.*
+
 ![Logo](logo.png)
 
-Opinionated BuildBot workflow.
+
 
 
 Installation
