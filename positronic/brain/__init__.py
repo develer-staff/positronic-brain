@@ -28,7 +28,7 @@ def master(url, email_from, title='BuildBot'):
     BrainConfig['emailFrom'] = email_from
     BrainConfig['emailLookup'] = email_from.split('@')[-1]
 
-    BuildmasterConfig['buildbotURL'] = url
+    BuildmasterConfig['buildbotURL'] = url if url.endswith('/') else url + '/'
     BuildmasterConfig['title'] = title
     BuildmasterConfig['titleURL'] = url
 
