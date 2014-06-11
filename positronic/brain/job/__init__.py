@@ -39,3 +39,12 @@ class Job(object):
         BuildmasterConfig['schedulers'].append(ForceScheduler(
             name=scheduler_name(self, 'force'),
             builderNames=[self.name]))
+
+    def add_step(self, step):
+        # Any fail in the build pipeline MUST cause a build failure
+        step.haltOnFailure = True
+        step.alwaysRun = False
+
+        self.build.addStep(step)
+
+        return self

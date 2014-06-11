@@ -17,6 +17,7 @@
 
 from buildbot.changes.filter import ChangeFilter
 from buildbot.changes.svnpoller import SVNPoller
+from buildbot.interfaces import IBuildStepFactory
 from buildbot.process.properties import Interpolate
 from buildbot.schedulers.basic import SingleBranchScheduler
 from buildbot.status.mail import MailNotifier
@@ -30,7 +31,7 @@ from buildbot.steps.transfer import DirectoryUpload
 
 from positronic.brain.config import BrainConfig, BuildmasterConfig
 from positronic.brain.job import Job
-from positronic.brain.utils import has_svn_change_source, scheduler_name
+from positronic.brain.utils import has_svn_change_source, overrides, scheduler_name
 
 
 class FreestyleJob(Job):
@@ -39,31 +40,53 @@ class FreestyleJob(Job):
         super(FreestyleJob, self).__init__(name, slaves)
 
         # Creates the artifacts directory, making sure it is gets cleared when the build starts.
-        self.build.addStep(SetProperty(
+        #
+        # NOTE: We use Job's add_step() method here because our version messes up with the step
+        # execution order, something we don't want to here.
+        super(FreestyleJob, self).add_step(SetProperty(
             property="artifactsdir",
             value=Interpolate('%(prop:builddir)s/artifacts'),
-            haltOnFailure=True,
             hideStepIf=True))
 
-        self.build.addStep(RemoveDirectory(
+        super(FreestyleJob, self).add_step(RemoveDirectory(
             dir=Interpolate('%(prop:artifactsdir)s'),
-            haltOnFailure=True,
             hideStepIf=True))
 
-        self.build.addStep(MakeDirectory(
+        super(FreestyleJob, self).add_step(MakeDirectory(
             dir=Interpolate('%(prop:artifactsdir)s'),
-            haltOnFailure=True,
             hideStepIf=True))
+
+        # As the last step, we grab artifacts from the slave. This MUST always be the last step. Use
+        # the add_step() helper to insert other steps before this one.
+        #
+        # NOTE: As above, we use Job's add_step() method here because our version messes up with the
+        # step execution order, something we don't want to here.
+        super(FreestyleJob, self).add_step(DirectoryUpload(
+            slavesrc=Interpolate('%(prop:artifactsdir)s'),
+            masterdest=Interpolate('~/artifacts/%(prop:buildername)s/%(prop:buildnumber)s'),
+            hideStepIf=True))
+
+    @overrides(Job)
+    def add_step(self, step):
+        # Any fail in the build pipeline MUST cause a build failure
+        step.haltOnFailure = True
+        step.alwaysRun = False
+
+        if len(self.build.steps) == 0:
+            self.build.addStep(step)
+        else:
+            self.build.steps.insert(len(self.build.steps) - 1, IBuildStepFactory(step))
+
+        return self
 
     def checkout(self, workdir, url, branch):
         repourl = '%s/%s' % (url, branch)
 
-        self.build.addStep(SVN(
+        self.add_step(SVN(
             mode='full',
             method='clean',
             repourl=repourl,
-            workdir=workdir,
-            haltOnFailure=True))
+            workdir=workdir))
 
         if not has_svn_change_source(repourl):
             BuildmasterConfig['change_source'].append(SVNPoller(
@@ -79,15 +102,6 @@ class FreestyleJob(Job):
 
         return self
 
-    def collect_artifacts(self):
-        self.build.addStep(DirectoryUpload(
-            slavesrc=Interpolate('%(prop:artifactsdir)s'),
-            masterdest=Interpolate('~/artifacts/%(prop:buildername)s/%(prop:buildnumber)s'),
-            haltOnFailure=True,
-            hideStepIf=True))
-
-        return self
-
     def command(self, *args, **kwargs):
         env = {
             'BUILD': Interpolate('%(prop:buildnumber)s'),
@@ -100,16 +114,12 @@ class FreestyleJob(Job):
         else:
             kwargs['env'] = env
 
-        if not 'haltOnFailure' in kwargs:
-            kwargs['haltOnFailure'] = True
-
-        self.build.addStep(ShellCommand(command=list(args), **kwargs))
+        self.add_step(ShellCommand(command=list(args), **kwargs))
 
         return self
 
     def notify(self, *recipients):
         BuildmasterConfig['status'].append(MailNotifier(
-            addLogs=True,
             builders=[self.name],
             extraRecipients=recipients,
             fromaddr=BrainConfig['emailFrom'],

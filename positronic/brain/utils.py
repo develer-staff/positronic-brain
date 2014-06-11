@@ -32,6 +32,16 @@ def has_change_source(kind, attr, value):
         return False
 
 
+# See: http://stackoverflow.com/a/8313042
+def overrides(interface_class):
+    def overrider(method):
+        assert(method.__name__ in dir(interface_class))
+
+        return method
+
+    return overrider
+
+
 def scheduler_name(job, *args):
     return name(job.name, 'scheduler', *args)
 

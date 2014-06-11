@@ -42,8 +42,7 @@ FreestyleJob('my-project', slaves=['my-first-slave', 'my-second-slave']) \
     .command('make') \
     .command('make', 'check') \
     .command('make', 'packages') \
-    .notify('dev1@example.com') \
-    .collect_artifacts()
+    .notify('dev1@example.com')
 ```
 
 
