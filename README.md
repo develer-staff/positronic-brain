@@ -3,6 +3,8 @@ Positronic Brain
 
 *Opinionated BuildBot workflow.*
 
+![Build Status](http://img.shields.io/travis/develersrl/positronic-brain.svg)
+
 ![Logo](logo.png)
 
 
