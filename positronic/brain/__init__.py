@@ -17,6 +17,7 @@
 
 from buildbot.buildslave import BuildSlave
 from buildbot.status.html import WebStatus
+from buildbot.status.mail import MailNotifier
 from buildbot.status.web.authz import Authz
 
 from positronic.brain.config import BrainConfig, BuildmasterConfig
@@ -25,7 +26,7 @@ from positronic.brain.job.matrix import MatrixJob
 from positronic.brain.utils import get_default_email_address
 
 
-def master(url, email_from=None, title='BuildBot'):
+def master(url, admins=[], email_from=None, title='BuildBot'):
     # BrainConfig holds global configuration values which would not be recognized if put in
     # BuildmasterConfig.
     BrainConfig['emailFrom'] = email_from if email_from else get_default_email_address(url)
@@ -64,6 +65,14 @@ def master(url, email_from=None, title='BuildBot'):
             http_port=8010,
             authz=Authz(forceBuild=True, stopBuild=True))
     ]
+
+    # These people receive emails for EVERYTHING that happens within this BuildBot.
+    if admins:
+        BuildmasterConfig['status'].append(MailNotifier(
+            extraRecipients=admins,
+            fromaddr=BrainConfig['emailFrom'],
+            mode='all',
+            sendToInterestedUsers=False))
 
 
 def slave(name, password):
