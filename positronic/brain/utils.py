@@ -24,6 +24,7 @@ from positronic.brain.config import BuildmasterConfig
 
 def get_default_email_address(url):
     """Builds a default email address for all outgoing notifications."""
+
     return 'noreply@' + '.'.join(urlparse(url).netloc.split('.')[-2:])
 
 
