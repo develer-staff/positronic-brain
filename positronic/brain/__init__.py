@@ -22,7 +22,6 @@ from buildbot.status.web.authz import Authz
 
 from positronic.brain.config import BrainConfig, BuildmasterConfig
 from positronic.brain.job.freestyle import FreestyleJob
-from positronic.brain.job.matrix import MatrixJob
 from positronic.brain.utils import get_default_email_address
 
 
