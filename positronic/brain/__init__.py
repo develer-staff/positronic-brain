@@ -32,14 +32,12 @@ def master(url, email_from, title='BuildBot'):
     BuildmasterConfig['title'] = title
     BuildmasterConfig['titleURL'] = url
 
+    # Launches the web interface with no authentication by default, allowing all users to start and
+    # stop builds.
     BuildmasterConfig['status'] = [
         WebStatus(
             http_port=8010,
-            authz=Authz(
-                cancelPendingBuild=True,
-                forceBuild=True,
-                stopBuild=True)
-        )
+            authz=Authz(forceBuild=True, stopBuild=True))
     ]
 
 
