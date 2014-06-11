@@ -1,13 +1,11 @@
 Positronic Brain
 ================
 
+<img align="right" src="logo.png"/>
+
 *Opinionated BuildBot workflow.*
 
 ![Build Status](http://img.shields.io/travis/develersrl/positronic-brain.svg)
-
-![Logo](logo.png)
-
-
 
 
 Installation
