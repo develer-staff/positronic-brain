@@ -22,13 +22,14 @@ from buildbot.status.web.authz import Authz
 from positronic.brain.config import BrainConfig, BuildmasterConfig
 from positronic.brain.job.freestyle import FreestyleJob
 from positronic.brain.job.matrix import MatrixJob
+from positronic.brain.utils import get_default_email_address
 
 
-def master(url, email_from, title='BuildBot'):
+def master(url, email_from=None, title='BuildBot'):
     # BrainConfig holds global configuration values which would not be recognized if put in
     # BuildmasterConfig.
-    BrainConfig['emailFrom'] = email_from
-    BrainConfig['emailLookup'] = email_from.split('@')[-1]
+    BrainConfig['emailFrom'] = email_from if email_from else get_default_email_address(url)
+    BrainConfig['emailLookup'] = BrainConfig['emailFrom'].split('@')[-1]
 
     # Site definition
     # See: http://docs.buildbot.net/current/manual/cfg-global.html#site-definitions

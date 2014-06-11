@@ -15,9 +15,16 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
 
+from urlparse import urlparse
+
 from buildbot.changes.svnpoller import SVNPoller
 
 from positronic.brain.config import BuildmasterConfig
+
+
+def get_default_email_address(url):
+    """Builds a default email address for all outgoing notifications."""
+    return 'noreply@' + '.'.join(urlparse(url).netloc.split('.')[-2:])
 
 
 def has_svn_change_source(svnurl):
