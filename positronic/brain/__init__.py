@@ -25,9 +25,13 @@ from positronic.brain.job.matrix import MatrixJob
 
 
 def master(url, email_from, title='BuildBot'):
+    # BrainConfig holds global configuration values which would not be recognized if put in
+    # BuildmasterConfig.
     BrainConfig['emailFrom'] = email_from
     BrainConfig['emailLookup'] = email_from.split('@')[-1]
 
+    # Site definition
+    # See: http://docs.buildbot.net/current/manual/cfg-global.html#site-definitions
     BuildmasterConfig['buildbotURL'] = url if url.endswith('/') else url + '/'
     BuildmasterConfig['title'] = title
     BuildmasterConfig['titleURL'] = BuildmasterConfig['buildbotURL']
