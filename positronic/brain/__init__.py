@@ -43,8 +43,7 @@ def master(url, email_from, title='BuildBot'):
     ]
 
 
-def slave(name, password, **kwargs):
-    if not 'max_builds' in kwargs:
-        kwargs['max_builds'] = 1
-
-    BuildmasterConfig['slaves'].append(BuildSlave(name, password, **kwargs))
+def slave(name, password):
+    # In general, our slaves assume that they have full control of the machine they are running on,
+    # thus, we force at most one job running on each node at a time.
+    BuildmasterConfig['slaves'].append(BuildSlave(name, password, max_builds=1))
