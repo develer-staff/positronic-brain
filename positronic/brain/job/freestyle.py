@@ -69,8 +69,8 @@ class FreestyleJob(Job):
     @overrides(Job)
     def add_step(self, step):
         # Any fail in the build pipeline MUST cause a build failure
-        step.haltOnFailure = True
         step.alwaysRun = False
+        step.haltOnFailure = True
 
         if len(self.build.steps) == 0:
             self.build.addStep(step)
