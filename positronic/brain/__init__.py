@@ -30,7 +30,7 @@ def master(url, email_from, title='BuildBot'):
 
     BuildmasterConfig['buildbotURL'] = url if url.endswith('/') else url + '/'
     BuildmasterConfig['title'] = title
-    BuildmasterConfig['titleURL'] = url
+    BuildmasterConfig['titleURL'] = BuildmasterConfig['buildbotURL']
 
     # Launches the web interface with no authentication by default, allowing all users to start and
     # stop builds.
