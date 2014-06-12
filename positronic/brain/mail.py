@@ -21,6 +21,7 @@ This module contains the message formatter used with the MailNotifier.
 """
 
 import cgi
+import datetime
 
 from buildbot.status.builder import Results
 
