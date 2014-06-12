@@ -19,6 +19,7 @@
 Contains functions to perform basic initialization of a master node.
 """
 
+import jinja2
 
 from buildbot.buildslave import BuildSlave
 from buildbot.status.html import WebStatus
@@ -80,8 +81,9 @@ def master(url, admins=[], email_from=None, title='BuildBot'):
     # stop builds.
     BuildmasterConfig['status'] = [
         WebStatus(
+            authz=Authz(forceBuild=True, stopBuild=True),
             http_port=8010,
-            authz=Authz(forceBuild=True, stopBuild=True))
+            jinja_loaders=[jinja2.PackageLoader('positronic.brain.status.web', 'templates')])
     ]
 
     # These people receive emails for EVERYTHING that happens within this BuildBot.
