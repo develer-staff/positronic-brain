@@ -21,14 +21,10 @@ from buildbot.interfaces import IBuildStepFactory
 from buildbot.process.properties import Interpolate
 from buildbot.schedulers.basic import SingleBranchScheduler
 from buildbot.status.mail import MailNotifier
-from buildbot.steps.master import SetProperty
 from buildbot.steps.shell import ShellCommand
-from buildbot.steps.slave import MakeDirectory
-from buildbot.steps.slave import RemoveDirectory
 from buildbot.steps.source.svn import SVN
-from buildbot.steps.transfer import DirectoryUpload
 
-
+from positronic.brain.artifact import add_artifact_pre_build_steps, add_artifact_post_build_steps
 from positronic.brain.config import BrainConfig, BuildmasterConfig
 from positronic.brain.job import Job
 from positronic.brain.mail import html_message_formatter
@@ -40,26 +36,11 @@ class FreestyleJob(Job):
     def __init__(self, name, workers):
         super(FreestyleJob, self).__init__(name, workers)
 
-        # Creates the artifacts directory, making sure it is gets cleared when the build starts.
-        self.add_step(SetProperty(
-            property="artifactsdir",
-            value=Interpolate('%(prop:builddir)s/artifacts'),
-            hideStepIf=True))
-
-        self.add_step(RemoveDirectory(
-            dir=Interpolate('%(prop:artifactsdir)s'),
-            hideStepIf=True))
-
-        self.add_step(MakeDirectory(
-            dir=Interpolate('%(prop:artifactsdir)s'),
-            hideStepIf=True))
+        add_artifact_pre_build_steps(self)
 
     def __exit__(self, type, value, traceback):
+        add_artifact_post_build_steps(self)
         # As the last step, we grab artifacts from the worker. This MUST always be the last step.
-        self.add_step(DirectoryUpload(
-            slavesrc=Interpolate('%(prop:artifactsdir)s'),
-            masterdest=Interpolate('~/artifacts/%(prop:buildername)s/%(prop:buildnumber)s'),
-            hideStepIf=True))
 
     def checkout(self, workdir, url, branch):
         repourl = '%s/%s' % (url, branch)

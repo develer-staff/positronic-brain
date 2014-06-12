@@ -20,12 +20,18 @@ This module contains miscellaneous utility functions.
 """
 
 import binascii
+import os
+import os.path
 
 from urlparse import urlparse
 
 from buildbot.changes.svnpoller import SVNPoller
 
 from positronic.brain.config import BuildmasterConfig
+
+
+def abspath(p):
+    return os.path.abspath(os.path.expanduser(p))
 
 
 def get_default_email_address(url):
