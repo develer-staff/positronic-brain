@@ -34,16 +34,16 @@ class Job(object):
 
     """
 
-    def __init__(self, name, slaves):
+    def __init__(self, name, workers):
         self.name = name
-        self.slaves = slaves
+        self.workers = workers
 
         self.build = BuildFactory()
 
         BuildmasterConfig['builders'].append(BuilderConfig(
             name=self.name,
             factory=self.build,
-            slavenames=self.slaves))
+            slavenames=self.workers))
 
         BuildmasterConfig['schedulers'].append(ForceScheduler(
             name=scheduler_name(self, 'force'),

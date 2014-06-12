@@ -97,7 +97,7 @@ def master(url, admins=[], email_from=None, title='BuildBot'):
             sendToInterestedUsers=False))
 
 
-def slave(name, password):
+def worker(name, password):
     """Adds a new worker node.
 
     All worker nodes are configured to run at most one build at a time.

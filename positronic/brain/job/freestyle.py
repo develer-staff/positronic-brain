@@ -37,8 +37,8 @@ from positronic.brain.utils import has_svn_change_source, scheduler_name
 
 class FreestyleJob(Job):
 
-    def __init__(self, name, slaves):
-        super(FreestyleJob, self).__init__(name, slaves)
+    def __init__(self, name, workers):
+        super(FreestyleJob, self).__init__(name, workers)
 
         # Creates the artifacts directory, making sure it is gets cleared when the build starts.
         self.add_step(SetProperty(

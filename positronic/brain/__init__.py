@@ -26,7 +26,7 @@ from this namespace.
 """
 
 
-from positronic.brain.base import master, slave
+from positronic.brain.base import master, worker
 from positronic.brain.config import BrainConfig, BuildmasterConfig
 from positronic.brain.job.freestyle import FreestyleJob
 
@@ -36,5 +36,5 @@ __all__ = [
     'BuildmasterConfig',
     'FreestyleJob',
     'master',
-    'slave',
+    'worker',
 ]

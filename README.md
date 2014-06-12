@@ -44,10 +44,10 @@ from positronic.brain import *
 
 master(url='https://buildbot.example.com/')
 
-slave('my-first-slave', 'secretpassword')
-slave('my-second-slave', 'anothersecretpassword')
+worker('my-first-worker', 'secretpassword')
+worker('my-second-worker', 'anothersecretpassword')
 
-with FreestyleJob('my-project', slaves=['my-first-slave', 'my-second-slave']) as j:
+with FreestyleJob('my-project', workers=['my-first-worker', 'my-second-worker']) as j:
     j.checkout('project', 'svn+ssh://svn.example.com/svn/project', 'trunk')
     j.command('make')
     j.command('make', 'check')
