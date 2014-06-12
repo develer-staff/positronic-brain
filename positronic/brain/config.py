@@ -40,7 +40,4 @@ BuildmasterConfig = {
 }
 
 
-BrainConfig = {
-    'emailFrom': 'buildbot@example.com',
-    'emailLookup': 'example.com',
-}
+BrainConfig = {}
