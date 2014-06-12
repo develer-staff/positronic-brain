@@ -20,6 +20,7 @@ from buildbot.process.factory import BuildFactory
 from buildbot.schedulers.forcesched import ForceScheduler
 
 from positronic.brain.config import BuildmasterConfig
+from positronic.brain import utils
 from positronic.brain.utils import scheduler_name
 
 
@@ -35,7 +36,7 @@ class Job(object):
     """
 
     def __init__(self, name, workers):
-        self.name = name
+        self.name = utils.name(name)
         self.workers = workers
 
         self.build = BuildFactory()

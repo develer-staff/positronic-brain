@@ -16,7 +16,7 @@
 #
 
 
-from positronic.brain.utils import get_default_email_address, name
+from positronic.brain.utils import get_default_email_address, name, scheduler_name
 
 
 def test_get_default_email_address():
@@ -26,5 +26,14 @@ def test_get_default_email_address():
 
 
 def test_name():
-    assert name('example', 'name') == 'example-name'
-    assert name('example', 'name', 'with', 'spaces  ') == 'example-name-with-spaces'
+    assert name('ShouldBeLowercase') == 'shouldbelowercase'
+    assert name('  Stripspaces  ') == 'stripspaces'
+    assert name('join words') == 'join-words'
+    assert name('  join words with trailing spaces   ') == 'join-words-with-trailing-spaces'
+
+
+def test_scheduler_name():
+    class Mock(object):
+        name = 'Long Job Name'
+
+    assert scheduler_name(Mock(), 'force') == 'long-job-name-scheduler-force'

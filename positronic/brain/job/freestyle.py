@@ -32,7 +32,7 @@ from buildbot.steps.transfer import DirectoryUpload
 from positronic.brain.config import BrainConfig, BuildmasterConfig
 from positronic.brain.job import Job
 from positronic.brain.mail import html_message_formatter
-from positronic.brain.utils import has_svn_change_source, scheduler_name
+from positronic.brain.utils import has_svn_change_source, hashify, scheduler_name
 
 
 class FreestyleJob(Job):
@@ -77,7 +77,7 @@ class FreestyleJob(Job):
                 histmax=10))
 
         BuildmasterConfig['schedulers'].append(SingleBranchScheduler(
-            name=scheduler_name(self, 'svn', url, branch),
+            name=scheduler_name(self, 'svn-' + hashify(repourl)),
             treeStableTimer=60,
             builderNames=[self.name],
             change_filter=ChangeFilter(repository=repourl)))

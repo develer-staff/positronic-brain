@@ -19,6 +19,7 @@
 This module contains miscellaneous utility functions.
 """
 
+import binascii
 
 from urlparse import urlparse
 
@@ -62,16 +63,20 @@ def has_change_source(filter_by, attr, value):
         return False
 
 
-def scheduler_name(job, *args):
+def hashify(data):
+    return binascii.hexlify(str(binascii.crc32(data)))
+
+
+def scheduler_name(job, scheduler_name):
     """Creates a name for a scheduler."""
-    return name(job.name, 'scheduler', *args)
+    return name('%s-scheduler-%s' % (job.name, scheduler_name))
 
 
-def name(*args):
+def name(n):
     """Normalizes a name.
 
     Normalizes a name so that it becomes all lower case, trims spaces and replaces spaces between
     words with dashes.
 
     """
-    return ('-'.join(args)).strip()
+    return '-'.join(p.strip().lower() for p in n.split())
