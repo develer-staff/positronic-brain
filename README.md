@@ -18,6 +18,7 @@ Adding a positronic brain to your BuildBot gives you the following:
 * Automatic handling of Change Sources and Schedulers when you add a source checkout
   step to a build (SVN only, for now).
 * Archiving of artifacts on the master after each successful build.
+* Defaults to the waterfall view.
 
 
 Installation
