@@ -7,6 +7,18 @@ Positronic Brain
 
 [![Build Status](https://travis-ci.org/develersrl/positronic-brain.svg?branch=master)](https://travis-ci.org/develersrl/positronic-brain)
 
+We abstract away BuildBot configuration with an embedded DSL (in Python) so that a complete
+workflow can be expressed with few lines dropped in your `master.cfg`.
+
+Adding a positronic brain to your BuildBot gives you the following:
+
+* Out-of-the-box sane defaults for your BuildBot master.
+* Automated emails sent to developers after a build failure.
+* Automated emails sent to administrators for all builds on all projects.
+* Automatic configuration of Change Sources and Schedulers when you add a source checkout
+  step to a build (SVN only, for now).
+* Automated archiving of artifacts on the master after a successful build.
+
 
 Installation
 ------------
@@ -30,9 +42,7 @@ In your BuildBot master configuration file (`master.cfg`) import everything from
 ```python
 from positronic.brain import *
 
-master(url='https://buildbot.example.com/',
-       email_from='buildbot@example.com',
-       title='Example Buildbot')
+master(url='https://buildbot.example.com/')
 
 slave('my-first-slave', 'secretpassword')
 slave('my-second-slave', 'anothersecretpassword')
@@ -44,13 +54,3 @@ with FreestyleJob('my-project', slaves=['my-first-slave', 'my-second-slave']) as
     j.command('make', 'packages')
     j.notify('dev1@example.com')
 ```
-
-
-Goodies
--------
-
-* Increased readability and terseness of the configuration file with declarative configuration and
-  judicious defaults.
-* Configure the master + Web interface with one function call.
-* A base class (`FreestyleJob`) which automatically configures change sources, schedulers and
-  common build steps.
