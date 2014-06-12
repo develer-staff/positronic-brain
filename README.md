@@ -12,12 +12,12 @@ workflow can be expressed with few lines dropped in your `master.cfg`.
 
 Adding a positronic brain to your BuildBot gives you the following:
 
-* Out-of-the-box sane defaults for your BuildBot master.
-* Automated emails sent to developers after a build failure.
-* Automated emails sent to administrators for all builds on all projects.
-* Automatic configuration of Change Sources and Schedulers when you add a source checkout
+* Sane defaults for your BuildBot master without having to do anything.
+* Notification emails sent to _developers_ after a build failure.
+* Notification emails sent to _administrators_ for all builds on all projects.
+* Automatic handling of Change Sources and Schedulers when you add a source checkout
   step to a build (SVN only, for now).
-* Automated archiving of artifacts on the master after a successful build.
+* Archiving of artifacts on the master after each successful build.
 
 
 Installation
