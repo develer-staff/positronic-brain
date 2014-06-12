@@ -15,6 +15,11 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
 
+"""
+This module contains miscellaneous utility functions.
+"""
+
+
 from urlparse import urlparse
 
 from buildbot.changes.svnpoller import SVNPoller
@@ -32,27 +37,48 @@ def has_svn_change_source(svnurl):
     return has_change_source(SVNPoller, 'svnurl', svnurl)
 
 
-def has_change_source(kind, attr, value):
-    for change_source in [c for c in BuildmasterConfig['change_source'] if isinstance(c, kind)]:
+def has_change_source(filter_by, attr, value):
+    """Determines whether a change source has already been added to BuilmasterConfig.
+
+    BuildBot doesn't allow multiple instances of a Change Source pointing to the same repository.
+    This function can be used by Jobs to skip adding a new Change Source if an identical one is
+    already there.
+
+    Arguments:
+
+    - filter_by: When looking up existing change sources, take only those of this type into account.
+    - attr: The attribute to look up.
+    - value: The value to compare to determine if a Change Source has already been added.
+
+    """
+    for change_source in [c for c in BuildmasterConfig['change_source'] if isinstance(c, filter_by)]:
         if getattr(change_source, attr, '') == value:
             return True
     else:
         return False
 
 
+def scheduler_name(job, *args):
+    """Creates a name for a scheduler."""
+    return name(job.name, 'scheduler', *args)
+
+
+def name(*args):
+    """Normalizes a name.
+
+    Normalizes a name so that it becomes all lower case, trims spaces and replaces spaces between
+    words with dashes.
+
+    """
+    return ('-'.join(args)).strip()
+
+
 # See: http://stackoverflow.com/a/8313042
 def overrides(interface_class):
+    """A decorator which ensures a class method is overwritten."""
     def overrider(method):
         assert(method.__name__ in dir(interface_class))
 
         return method
 
     return overrider
-
-
-def scheduler_name(job, *args):
-    return name(job.name, 'scheduler', *args)
-
-
-def name(*args):
-    return ('-'.join(args)).strip()

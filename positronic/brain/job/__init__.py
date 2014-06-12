@@ -25,6 +25,9 @@ from positronic.brain.utils import scheduler_name
 
 class Job(object):
 
+    """The base class for all job types.
+    """
+
     def __init__(self, name, slaves):
         self.name = name
         self.slaves = slaves

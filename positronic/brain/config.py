@@ -16,9 +16,15 @@
 #
 
 """
-This module contains BuildBot's global configuration dictionary, which should eventually appear
-as a 'BuildmasterConfig' symbol in the top level configuration file of the master, which means
-that you should use 'from config import *' to import this module.
+This module contains the `BuildmasterConfig` dictionary used by BuildBot to configure the master.
+
+It additionally contains the `BrainConfig` dictionary for all global settings which we can't put
+into the `BuildmasterConfig` dictionary since BuildBot complains if it finds unknown stuff in there.
+
+Please note that the `BuildmasterConfig` MUST appear in the top-level context of the configuration
+file read by the master when it starts up, which means that you MUST use the `from
+positronic.brain.config import *` and make sure the symbol 'flows up' until it is exposed from the
+topmost configuration file.
 """
 
 

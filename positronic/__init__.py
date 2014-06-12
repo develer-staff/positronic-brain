@@ -14,3 +14,6 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
+
+# An empty package so that people can do 'from positronic.brain import *'. Nothing to see here, move
+# along.

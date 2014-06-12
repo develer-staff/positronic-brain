@@ -16,8 +16,13 @@
 #
 
 
-from positronic.brain.utils import get_default_email_address
+from positronic.brain.utils import get_default_email_address, name
 
 
 def test_get_default_email_address():
     assert get_default_email_address('http://buildbot.example.com') == 'noreply@example.com'
+
+
+def test_name():
+    assert name('example', 'name') == 'example-name'
+    assert name('example', 'name', 'with', 'spaces  ') == 'example-name-with-spaces'

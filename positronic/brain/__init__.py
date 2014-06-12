@@ -15,6 +15,17 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
 
+"""
+Importing this module with the statement
+
+    from positronic.brain import *
+
+imports all classes and symbols needed to configure the master, all workers and build jobs. It
+should usually be the only import you need, since we take care to import and expose all you need
+from this namespace.
+"""
+
+
 from buildbot.buildslave import BuildSlave
 from buildbot.status.html import WebStatus
 from buildbot.status.mail import MailNotifier
@@ -26,6 +37,21 @@ from positronic.brain.utils import get_default_email_address
 
 
 def master(url, admins=[], email_from=None, title='BuildBot'):
+    """Configures the BuildBot master.
+
+    This should be the first call in your BuildBot configuration file. It spawns the web server on
+    port 8010. The web server DOES NOT HAVE AUTHENTICATION ENABLED, so make sure to put a reverse
+    proxy in front of it.
+
+    Arguments:
+
+    - url: The URL where users can find this BuildBot instance.
+    - admins: A list of strings which contains the email addresses of all administrators. NOTE: They
+      will receive an email for any build that happens.
+    - email_from: The email address used in the 'From:' field for all outgoin email messages.
+    - title: The title shown in the web interface.
+
+    """
     # BrainConfig holds global configuration values which would not be recognized if put in
     # BuildmasterConfig.
     BrainConfig['emailFrom'] = email_from if email_from else get_default_email_address(url)
@@ -75,6 +101,16 @@ def master(url, admins=[], email_from=None, title='BuildBot'):
 
 
 def slave(name, password):
+    """Adds a new worker node.
+
+    All worker nodes are configured to run at most one build at a time.
+
+    Arguments:
+    - name: The name of the worker node, shown in the web interface.
+    - password: Password used by the agent installed on worker nodes to authenticate with the
+      master.
+
+    """
     # In general, our slaves assume that they have full control of the machine they are running on,
     # thus, we force at most one job running on each node at a time.
     BuildmasterConfig['slaves'].append(BuildSlave(name, password, max_builds=1))
