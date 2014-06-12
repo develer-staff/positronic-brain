@@ -20,7 +20,9 @@ from positronic.brain.utils import get_default_email_address, name
 
 
 def test_get_default_email_address():
-    assert get_default_email_address('http://buildbot.example.com') == 'noreply@example.com'
+    assert get_default_email_address('http://buildbot.example.com') == 'buildbot@example.com'
+    assert get_default_email_address('http://example.com') == 'buildbot@example.com'
+    assert get_default_email_address('http://intranet') == 'buildbot@intranet'
 
 
 def test_name():

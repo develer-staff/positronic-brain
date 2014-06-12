@@ -30,7 +30,11 @@ from positronic.brain.config import BuildmasterConfig
 def get_default_email_address(url):
     """Builds a default email address for all outgoing notifications."""
 
-    return 'noreply@' + '.'.join(urlparse(url).netloc.split('.')[-2:])
+    domain = urlparse(url).netloc.split('.')
+
+    assert len(domain) >= 1
+
+    return 'buildbot@' + '.'.join(domain[-2:])
 
 
 def has_svn_change_source(svnurl):
