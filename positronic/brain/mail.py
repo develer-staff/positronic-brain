@@ -106,33 +106,36 @@ def html_message_formatter(mode, name, build, results, master_status):
 
         text.append('<br>')
 
-        # get log for last step
-        logs = build.getLogs()
+        if result != 'success':
+            # get log for last step
+            logs = build.getLogs()
 
-        # logs within a step are in reverse order. Search back until we find stdio
-        for log in reversed(logs):
-            if log.getName() == 'stdio':
-                break
+            # logs within a step are in reverse order. Search back until we find stdio
+            for log in reversed(logs):
+                if log.getName() == 'stdio':
+                    break
 
-        name = "%s.%s" % (log.getStep().getName(), log.getName())
-        status, dummy = log.getStep().getResults()
-        content = log.getText().splitlines() # Note: can be VERY LARGE
-        url = '%s/steps/%s/logs/%s' % (master_status.getURLForThing(build),
-                                       log.getStep().getName(),
-                                       log.getName())
+            name = "%s.%s" % (log.getStep().getName(), log.getName())
+            status, dummy = log.getStep().getResults()
+            content = log.getText().splitlines() # Note: can be VERY LARGE
+            url = '%s/steps/%s/logs/%s' % (master_status.getURLForThing(build),
+                                           log.getStep().getName(),
+                                           log.getName())
 
-        text.append('<i>Detailed log of last build step:</i> <a href="%s">%s</a>'
-                    % (url, url))
-        text.append('<br>')
-        text.append('<h4>Last %d lines of "%s"</h4>' % (limit_lines, name))
+            text.append('<i>Detailed log of last build step:</i> <a href="%s">%s</a>'
+                        % (url, url))
+            text.append('<br>')
+            text.append('<h4>Last %d lines of "%s"</h4>' % (limit_lines, name))
 
-        unilist = list()
+            unilist = list()
 
-        for line in content[len(content)-limit_lines:]:
-            unilist.append(cgi.escape(unicode(line,'utf-8')))
+            for line in content[len(content)-limit_lines:]:
+                unilist.append(cgi.escape(unicode(line,'utf-8')))
 
-        text.append('<pre>'.join([uniline for uniline in unilist]))
-        text.append('</pre>')
+            text.append('<pre>'.join([uniline for uniline in unilist]))
+            text.append('</pre>')
+
+        # Closing line
         text.append('<br><br>')
         text.append('<b>-The Buildbot</b>')
 
