@@ -3,9 +3,9 @@ Positronic Brain
 
 <img align="right" src="logo.png"/>
 
-*Opinionated BuildBot workflow.*
+> *Opinionated BuildBot workflow.*
 
-![Build Status](http://img.shields.io/travis/develersrl/positronic-brain.svg)
+[![Build Status](https://travis-ci.org/develersrl/positronic-brain.svg?branch=master)](https://travis-ci.org/develersrl/positronic-brain)
 
 
 Installation
