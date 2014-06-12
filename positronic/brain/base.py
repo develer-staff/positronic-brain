@@ -27,6 +27,7 @@ from buildbot.status.mail import MailNotifier
 from buildbot.status.web.authz import Authz
 
 from positronic.brain.config import BrainConfig, BuildmasterConfig
+from positronic.brain.mail import html_message_formatter
 from positronic.brain.utils import get_default_email_address
 
 
@@ -91,6 +92,7 @@ def master(url, admins=[], email_from=None, title='BuildBot'):
         BuildmasterConfig['status'].append(MailNotifier(
             extraRecipients=admins,
             fromaddr=BrainConfig['emailFrom'],
+            messageFormatter=html_message_formatter,
             mode='all',
             sendToInterestedUsers=False))
 

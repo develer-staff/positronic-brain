@@ -31,6 +31,7 @@ from buildbot.steps.transfer import DirectoryUpload
 
 from positronic.brain.config import BrainConfig, BuildmasterConfig
 from positronic.brain.job import Job
+from positronic.brain.mail import html_message_formatter
 from positronic.brain.utils import has_svn_change_source, scheduler_name
 
 
@@ -104,6 +105,7 @@ class FreestyleJob(Job):
             builders=[self.name],
             extraRecipients=recipients,
             fromaddr=BrainConfig['emailFrom'],
+            messageFormatter=html_message_formatter,
             mode=['change', 'failing'],
             sendToInterestedUsers=False))
 
