@@ -37,12 +37,12 @@ master(url='https://buildbot.example.com/',
 slave('my-first-slave', 'secretpassword')
 slave('my-second-slave', 'anothersecretpassword')
 
-FreestyleJob('my-project', slaves=['my-first-slave', 'my-second-slave']) \
-    .checkout('project', 'svn+ssh://svn.example.com/svn/project', 'trunk') \
-    .command('make') \
-    .command('make', 'check') \
-    .command('make', 'packages') \
-    .notify('dev1@example.com')
+with FreestyleJob('my-project', slaves=['my-first-slave', 'my-second-slave']) as j:
+    j.checkout('project', 'svn+ssh://svn.example.com/svn/project', 'trunk')
+    j.command('make')
+    j.command('make', 'check')
+    j.command('make', 'packages')
+    j.notify('dev1@example.com')
 ```
 
 

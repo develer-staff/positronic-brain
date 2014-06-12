@@ -71,14 +71,3 @@ def name(*args):
 
     """
     return ('-'.join(args)).strip()
-
-
-# See: http://stackoverflow.com/a/8313042
-def overrides(interface_class):
-    """A decorator which ensures a class method is overwritten."""
-    def overrider(method):
-        assert(method.__name__ in dir(interface_class))
-
-        return method
-
-    return overrider

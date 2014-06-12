@@ -26,6 +26,12 @@ from positronic.brain.utils import scheduler_name
 class Job(object):
 
     """The base class for all job types.
+
+    It doesn't do much by itself, except for creating a new Builder and a new Force Scheduler so
+    that users can forcibly trigger a new build.
+
+    This class can be used as a context manager although, by default, it does nothing.
+
     """
 
     def __init__(self, name, slaves):
@@ -42,6 +48,12 @@ class Job(object):
         BuildmasterConfig['schedulers'].append(ForceScheduler(
             name=scheduler_name(self, 'force'),
             builderNames=[self.name]))
+
+    def __enter__(self):
+        return self
+
+    def __exit__(self, type, value, traceback):
+        pass
 
     def add_step(self, step):
         # Any fail in the build pipeline MUST cause a build failure

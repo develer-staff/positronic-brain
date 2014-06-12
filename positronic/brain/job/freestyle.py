@@ -31,7 +31,7 @@ from buildbot.steps.transfer import DirectoryUpload
 
 from positronic.brain.config import BrainConfig, BuildmasterConfig
 from positronic.brain.job import Job
-from positronic.brain.utils import has_svn_change_source, overrides, scheduler_name
+from positronic.brain.utils import has_svn_change_source, scheduler_name
 
 
 class FreestyleJob(Job):
@@ -40,44 +40,25 @@ class FreestyleJob(Job):
         super(FreestyleJob, self).__init__(name, slaves)
 
         # Creates the artifacts directory, making sure it is gets cleared when the build starts.
-        #
-        # NOTE: We use Job's add_step() method here because our version messes up with the step
-        # execution order, something we don't want to here.
-        super(FreestyleJob, self).add_step(SetProperty(
+        self.add_step(SetProperty(
             property="artifactsdir",
             value=Interpolate('%(prop:builddir)s/artifacts'),
             hideStepIf=True))
 
-        super(FreestyleJob, self).add_step(RemoveDirectory(
+        self.add_step(RemoveDirectory(
             dir=Interpolate('%(prop:artifactsdir)s'),
             hideStepIf=True))
 
-        super(FreestyleJob, self).add_step(MakeDirectory(
+        self.add_step(MakeDirectory(
             dir=Interpolate('%(prop:artifactsdir)s'),
             hideStepIf=True))
 
-        # As the last step, we grab artifacts from the slave. This MUST always be the last step. Use
-        # the add_step() helper to insert other steps before this one.
-        #
-        # NOTE: As above, we use Job's add_step() method here because our version messes up with the
-        # step execution order, something we don't want to here.
-        super(FreestyleJob, self).add_step(DirectoryUpload(
+    def __exit__(self, type, value, traceback):
+        # As the last step, we grab artifacts from the worker. This MUST always be the last step.
+        self.add_step(DirectoryUpload(
             slavesrc=Interpolate('%(prop:artifactsdir)s'),
             masterdest=Interpolate('~/artifacts/%(prop:buildername)s/%(prop:buildnumber)s'),
             hideStepIf=True))
-
-    @overrides(Job)
-    def add_step(self, step):
-        # Any fail in the build pipeline MUST cause a build failure
-        step.alwaysRun = False
-        step.haltOnFailure = True
-
-        if len(self.build.steps) == 0:
-            self.build.addStep(step)
-        else:
-            self.build.steps.insert(len(self.build.steps) - 1, IBuildStepFactory(step))
-
-        return self
 
     def checkout(self, workdir, url, branch):
         repourl = '%s/%s' % (url, branch)
