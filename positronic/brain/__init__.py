@@ -36,6 +36,15 @@ from positronic.brain.job.freestyle import FreestyleJob
 from positronic.brain.utils import get_default_email_address
 
 
+__all__ = [
+    'BrainConfig',
+    'BuildmasterConfig',
+    'FreestyleJob',
+    'master',
+    'slave',
+]
+
+
 def master(url, admins=[], email_from=None, title='BuildBot'):
     """Configures the BuildBot master.
 
