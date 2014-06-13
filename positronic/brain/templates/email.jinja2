@@ -1,0 +1,67 @@
+<!-- ============== -->
+<!-- Build overview -->
+<!-- ============== -->
+
+<h3>Build status: {{ result.upper() }}</h3>
+
+<table cellspacing="10">
+    <tbody>
+        <tr>
+            <td><strong>Logs:</strong></td>
+            <td>{{ url }}</td>
+        </tr>
+        <tr>
+            <td><strong>Worker node:</strong></td>
+            <td>{{ worker }}</td>
+        </tr>
+        <tr>
+            <td><strong>Build reason:</strong></td>
+            <td>{{ reason }}</td>
+        </tr>
+    </tbody>
+</table>
+
+<!-- ============== -->
+<!-- Recent Changes -->
+<!-- ============== -->
+
+{% if changes %}
+    <h3>Recent Changes:</h3>
+{% endif %}
+
+{% for change in changes %}
+    <table cellspacing="10">
+        <tbody>
+            <tr>
+                <td><strong>Commit Message:</strong></td>
+                <td>{{ change.comments }}</td>
+            </tr>
+            <tr>
+                <td><strong>Changed By:</strong></td>
+                <td>{{ change.who }}</td>
+            </tr>
+            <tr>
+                <td><strong>Time:</strong></td>
+                <td>{{ datetime.datetime.fromtimestamp(change.when).ctime() }}</td>
+            </tr>
+            <tr>
+                <td><strong>Repository:</strong></td>
+                <td>{{ change.repository }}</td>
+            </tr>
+        </tbody>
+    </table>
+{% endfor %}
+
+<!-- =============================== -->
+<!-- Logs of last failing build step -->
+<!-- =============================== -->
+
+{% if result != 'success' and log %}
+    <h3>Last {{ log.length }} Lines From Build Log</h3>
+    <p><a href="{{ log.url }}">{{ log.url }}</a></p>
+    <pre>
+        {{ log.content }}
+    </pre>
+{% else %}
+    <p>There are no logs for this build.</p>
+{% endif %}

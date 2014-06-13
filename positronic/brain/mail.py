@@ -20,11 +20,15 @@
 This module contains the message formatter used with the MailNotifier.
 """
 
-import cgi
-import datetime
 
 from buildbot.status.builder import Results
+from buildbot.process.buildstep import SUCCESS
 
+from jinja2 import Environment, PackageLoader
+
+
+LOG_MAX_LINES = 100
+TEMPLATES_ENV = Environment(loader=PackageLoader('positronic.brain', 'templates'))
 
 
 # This function was copied (with some minor edits) from:
@@ -32,116 +36,51 @@ from buildbot.status.builder import Results
 def html_message_formatter(mode, name, build, results, master_status):
     """Provide a customized message to Buildbot's MailNotifier.
 
-    The last 80 lines of the log are provided as well as the changes relevant to the build. Message
+    The last 100 lines of the log are provided as well as the changes relevant to the build. Message
     content is formatted as html.
 
     """
     result = Results[results]
 
-    subject = '[%s] Build status: %s' % (name, result.upper())
+    subject = '[%s] %s on %s' % (name, result.upper(), build.getSlavename())
 
-    limit_lines = 80
+    # Obtains the last LOG_MAX_LINES from the last failing build step.
+    log = None
+    failed_logs = [l for l in reversed(build.getLogs()) if l.step.results != SUCCESS]
 
-    text = list()
-    text.append('<h4>Build status: %s</h4>' % result.upper())
-    text.append('<table cellspacing="10"><tr>')
-    text.append("<td>Worker:</td><td><b>%s</b></td></tr>" % build.getSlavename())
+    if failed_logs:
+        failed_log = failed_logs[0]
+        failed_log_lines = failed_log.getText().splitlines()[-LOG_MAX_LINES:]
 
-    if master_status.getURLForThing(build):
-        text.append('<tr><td>Complete logs for all build steps:</td><td><a href="%s">%s</a></td></tr>'
-                    % (master_status.getURLForThing(build),
-                       master_status.getURLForThing(build))
-                    )
-        text.append('<tr><td>Build Reason:</td><td>%s</td></tr>' % build.getReason())
+        if failed_log_lines:
+            log = {
+                'content': '\n'.join(failed_log_lines),
+                'length': len(failed_log_lines),
+                'url': '%s/steps/%s/logs/%s' % (master_status.getURLForThing(build),
+                                                failed_log.getStep().getName(),
+                                                failed_log.getName()),
+            }
 
-        source = ""
+    # Changes
+    changes = []
 
-        for ss in build.getSourceStamps():
-            if ss.codebase:
-                source += '%s: ' % ss.codebase
-            if ss.branch:
-                source += "[branch %s] " % ss.branch
+    for source_stamp in build.getSourceStamps():
+        if source_stamp.changes:
+            changes.extend([c.asDict() for c in source_stamp.changes])
 
-            if ss.revision:
-                source +=  ss.revision
-            else:
-                source += "HEAD"
+    print 'Changes: %s' % changes
 
-            if ss.patch:
-                source += " (plus patch)"
-            if ss.patch_info: # add patch comment
-                source += " (%s)" % ss.patch_info[1]
+    # Template context
+    body = TEMPLATES_ENV.get_template('email.jinja2').render(
+        changes=changes,
+        log=log,
+        reason=build.getReason(),
+        result=result,
+        url=master_status.getURLForThing(build),
+        worker=build.getSlavename())
 
-        text.append("<tr><td>Build Source Stamp:</td><td><b>%s</b></td></tr>" % source)
-
-        if build.getResponsibleUsers():
-            text.append("<tr><td>Blame:</td><td>%s</td></tr>" % ",".join(build.getResponsibleUsers()))
-
-        text.append('</table>')
-
-        if ss.changes:
-            text.append('<h4>Recent Changes:</h4>')
-
-            for c in ss.changes:
-                cd = c.asDict()
-
-                when = datetime.datetime.fromtimestamp(cd['when'] ).ctime()
-
-                text.append('<table cellspacing="10">')
-                text.append('<tr><td>Repository:</td><td>%s</td></tr>' % cd['repository'] )
-                text.append('<tr><td>Project:</td><td>%s</td></tr>' % cd['project'] )
-                text.append('<tr><td>Time:</td><td>%s</td></tr>' % when)
-                text.append('<tr><td>Changed by:</td><td>%s</td></tr>' % cd['who'] )
-                text.append('<tr><td>Comments:</td><td>%s</td></tr>' % cd['comments'] )
-                text.append('</table>')
-
-                files = cd['files']
-
-                if files:
-                    text.append('<table cellspacing="10"><tr><th align="left">Files</th></tr>')
-
-                    for file in files:
-                        text.append('<tr><td>%s:</td></tr>' % file['name'] )
-
-                    text.append('</table>')
-
-        text.append('<br>')
-
-        if result != 'success':
-            # get log for last step
-            logs = build.getLogs()
-
-            # logs within a step are in reverse order. Search back until we find stdio
-            for log in reversed(logs):
-                if log.getName() == 'stdio':
-                    break
-
-            name = "%s.%s" % (log.getStep().getName(), log.getName())
-            status, dummy = log.getStep().getResults()
-            content = log.getText().splitlines() # Note: can be VERY LARGE
-            url = '%s/steps/%s/logs/%s' % (master_status.getURLForThing(build),
-                                           log.getStep().getName(),
-                                           log.getName())
-
-            text.append('<i>Detailed log of last build step:</i> <a href="%s">%s</a>'
-                        % (url, url))
-            text.append('<br>')
-            text.append('<h4>Last %d lines of "%s"</h4>' % (limit_lines, name))
-
-            unilist = list()
-
-            for line in content[len(content)-limit_lines:]:
-                unilist.append(cgi.escape(unicode(line,'utf-8')))
-
-            text.append('<pre>'.join([uniline for uniline in unilist]))
-            text.append('</pre>')
-
-        # Closing line
-        text.append('<br><br>')
-        text.append('<b>-The Buildbot</b>')
-
-        return {
-            'body': "\n".join(text),
-            'type': 'html',
-            'subject': subject,
-        }
+    return {
+        'body': body,
+        'subject': subject,
+        'type': 'html',
+    }
