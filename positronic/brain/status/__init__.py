@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 #
 # Positronic Brain - Opinionated Buildbot Workflow
 # Copyright (C) 2014  Develer S.r.L.
