@@ -7,18 +7,18 @@ Positronic Brain
 
 [![Build Status](https://travis-ci.org/develersrl/positronic-brain.svg?branch=master)](https://travis-ci.org/develersrl/positronic-brain)
 
-We abstract away BuildBot configuration with an embedded DSL (in Python) so that a complete
-workflow can be expressed with few lines dropped in your `master.cfg`.
+Positronic Brain makes it extremely easy to get up and running with your BuildBot server by dropping
+few lines in your `master.cfg` file. Gone are the days of having to figure out how to wire all
+pieces together.
 
-Adding a positronic brain to your BuildBot gives you the following:
+Adding a positronic brain to your BuildBot brings you:
 
-* Sane defaults for your BuildBot master without having to do anything.
+* Sensible defaults for your BuildBot master.
 * Notification emails sent to _developers_ after a build failure.
 * Notification emails sent to _administrators_ for all builds on all projects.
-* Automatic handling of Change Sources and Schedulers when you add a source checkout
-  step to a build (SVN only, for now).
+* No need to mess with Change Sources or Schedulers.
 * Archiving of artifacts on the master after each successful build.
-* Defaults to the waterfall view.
+* Automatic deletion of old artifacts on the master.
 
 
 Installation
@@ -29,9 +29,8 @@ running:
 
     pip install https://github.com/develersrl/positronic-brain/archive/master.zip#egg=positronic-brain
 
-Please note that this package depends on a very specific version of the BuildBot master and you
-have to make sure to have it installed first (see [requirements.txt](requirements.txt) for more
-details).
+Please note that this package depends on a very specific version of the BuildBot master and you have
+to make sure to have it installed first (see [requirements.txt](requirements.txt) for more details).
 
 
 Usage
@@ -43,7 +42,8 @@ In your BuildBot master configuration file (`master.cfg`) import everything from
 ```python
 from positronic.brain import *
 
-master(url='https://buildbot.example.com/')
+#      basedir=basedir looks weird, but we need it.
+master(basedir=basedir, url='https://buildbot.example.com/')
 
 worker('my-first-worker', 'secretpassword')
 worker('my-second-worker', 'anothersecretpassword')
