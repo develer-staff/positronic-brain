@@ -32,7 +32,7 @@ from positronic.brain.mail import html_message_formatter
 from positronic.brain.utils import get_default_email_address
 
 
-def master(url, admins=[], email_from=None, title='BuildBot'):
+def master(basedir, url, admins=[], email_from=None, title='BuildBot'):
     """Configures the BuildBot master.
 
     This should be the first call in your BuildBot configuration file. It spawns the web server on
@@ -41,15 +41,22 @@ def master(url, admins=[], email_from=None, title='BuildBot'):
 
     Arguments:
 
+    - basedir: The master's base directory. This should be the `basedir` global variable which would
+      be defined inside the `master.cfg` configuration file.
     - url: The URL where users can find this BuildBot instance.
     - admins: A list of strings which contains the email addresses of all administrators. NOTE: They
       will receive an email for any build that happens.
     - email_from: The email address used in the 'From:' field for all outgoin email messages.
     - title: The title shown in the web interface.
 
+    Example:
+
+        master(basedir=basedir, url='http://buildbot.example.com')
+
     """
     # BrainConfig holds global configuration values which would not be recognized if put in
     # BuildmasterConfig.
+    BrainConfig['basedir'] = basedir
     BrainConfig['emailFrom'] = email_from if email_from else get_default_email_address(url)
     BrainConfig['emailLookup'] = BrainConfig['emailFrom'].split('@')[-1]
     BrainConfig['maxArtifacts'] = 10
