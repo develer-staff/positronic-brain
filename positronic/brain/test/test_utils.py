@@ -16,8 +16,20 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
 
+from buildbot.changes.svnpoller import SVNPoller
 
-from positronic.brain.utils import get_default_email_address, name, scheduler_name
+from positronic.brain.config import BuildmasterConfig
+from positronic.brain.utils import get_default_email_address, has_svn_change_source, name, scheduler_name
+
+
+def test_has_svn_change_source():
+    BuildmasterConfig['change_source'].append(SVNPoller(svnurl='svn+ssh://test1.example.com'))
+    BuildmasterConfig['change_source'].append(SVNPoller(svnurl='svn+ssh://test2.example.com'))
+
+    assert has_svn_change_source('svn+ssh://test2.example.com')
+    assert not has_svn_change_source('http://foobar.com')
+
+    BuildmasterConfig['change_source'] = []
 
 
 def test_get_default_email_address():
