@@ -43,7 +43,7 @@ ARTIFACTS_WORKER_DIR = Interpolate('%(prop:builddir)s/artifacts')
 
 
 class PruneOldArtifacts(BuildStep):
-    name = 'Delete Old Artifacts'
+    name = 'remove old artifacts'
 
     alwaysRun = False
     flunkOnFailure = True
@@ -99,7 +99,7 @@ def add_artifact_pre_build_steps(job):
 
 def add_artifact_post_build_steps(job):
     job.add_step(DirectoryUpload(
-        name='Archive Artifacts',
+        name='collect artifacts',
         slavesrc=Interpolate('%(prop:artifactsdir)s'),
         masterdest=ARTIFACTS_MASTER_BUILD_DIR))
 
