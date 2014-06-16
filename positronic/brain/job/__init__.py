@@ -60,7 +60,7 @@ class Job(object):
     def add_step(self, step):
         # Any fail in the build pipeline MUST cause a build failure
         step.alwaysRun = False
-        step.flunkOnFailure = False
+        step.flunkOnFailure = True
         step.flunkOnWarnings = False
         step.haltOnFailure = True
         step.warnOnFailure = False
