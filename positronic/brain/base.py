@@ -20,6 +20,9 @@
 Contains functions to perform basic initialization of a master node.
 """
 
+import os
+import os.path
+
 import jinja2
 
 from buildbot.buildslave import BuildSlave
@@ -60,6 +63,7 @@ def master(basedir, url, admins=[], email_from=None, title='BuildBot'):
     BrainConfig['emailFrom'] = email_from if email_from else get_default_email_address(url)
     BrainConfig['emailLookup'] = BrainConfig['emailFrom'].split('@')[-1]
     BrainConfig['maxArtifacts'] = 10
+    BrainConfig['artifactsDir'] = os.path.join(basedir, 'public_html', 'artifacts')
 
     # Site definition
     # See: http://docs.buildbot.net/current/manual/cfg-global.html#site-definitions
