@@ -106,6 +106,6 @@ def add_artifact_post_build_steps(job):
         slavesrc=Interpolate('%(prop:artifactsdir)s'),
         masterdest=Interpolate(join(BrainConfig['artifactsDir'],
                                     '%(prop:buildername)s', '%(prop:buildnumber)s')),
-        url=Interpolate('/artifacts/%(prop:buildername)s/%(prop:buildnumber)s')))
+        url=Interpolate('/artifacts/%(prop:buildername)s/%(prop:buildnumber)s/')))
 
     job.add_step(PruneOldArtifacts())
