@@ -6,6 +6,7 @@ Positronic Brain
 > *Opinionated BuildBot workflow.*
 
 [![Build Status](https://travis-ci.org/develersrl/positronic-brain.svg?branch=master)](https://travis-ci.org/develersrl/positronic-brain)
+[![Stories in Ready](https://badge.waffle.io/develersrl/positronic-brain.png?label=ready&title=Ready)](https://waffle.io/develersrl/positronic-brain)
 
 Positronic Brain makes it extremely easy to get up and running with your BuildBot server by dropping
 few lines in your `master.cfg` file. Gone are the days of having to figure out how to wire all
