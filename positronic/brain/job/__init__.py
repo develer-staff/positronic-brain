@@ -26,7 +26,6 @@ from positronic.brain.utils import scheduler_name
 
 
 class Job(object):
-
     """The base class for all job types.
 
     It doesn't do much by itself, except for creating a new Builder and a new Force Scheduler so

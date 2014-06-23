@@ -18,7 +18,6 @@
 
 from buildbot.changes.filter import ChangeFilter
 from buildbot.changes.svnpoller import SVNPoller
-from buildbot.interfaces import IBuildStepFactory
 from buildbot.process.properties import Interpolate
 from buildbot.schedulers.basic import SingleBranchScheduler
 from buildbot.status.mail import MailNotifier
@@ -33,7 +32,6 @@ from positronic.brain.utils import has_svn_change_source, hashify, scheduler_nam
 
 
 class FreestyleJob(Job):
-
     def __init__(self, name, workers):
         super(FreestyleJob, self).__init__(name, workers)
 

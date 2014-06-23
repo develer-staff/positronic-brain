@@ -24,7 +24,6 @@ import datetime
 
 from buildbot.status.builder import Results
 from buildbot.process.buildstep import SUCCESS
-
 from jinja2 import Environment, PackageLoader
 
 

@@ -19,7 +19,8 @@
 from buildbot.changes.svnpoller import SVNPoller
 
 from positronic.brain.config import BuildmasterConfig
-from positronic.brain.utils import get_default_email_address, has_svn_change_source, name, scheduler_name
+from positronic.brain.utils import get_default_email_address, has_svn_change_source, name, \
+    scheduler_name
 
 
 def test_has_svn_change_source():

@@ -6,18 +6,18 @@
 
 <table cellspacing="10">
     <tbody>
-        <tr>
-            <td><strong>Logs:</strong></td>
-            <td>{{ url }}</td>
-        </tr>
-        <tr>
-            <td><strong>Worker node:</strong></td>
-            <td>{{ worker }}</td>
-        </tr>
-        <tr>
-            <td><strong>Build reason:</strong></td>
-            <td>{{ reason }}</td>
-        </tr>
+    <tr>
+        <td><strong>Logs:</strong></td>
+        <td>{{ url }}</td>
+    </tr>
+    <tr>
+        <td><strong>Worker node:</strong></td>
+        <td>{{ worker }}</td>
+    </tr>
+    <tr>
+        <td><strong>Build reason:</strong></td>
+        <td>{{ reason }}</td>
+    </tr>
     </tbody>
 </table>
 
@@ -32,22 +32,22 @@
 {% for change in changes %}
     <table cellspacing="10">
         <tbody>
-            <tr>
-                <td><strong>Commit Message:</strong></td>
-                <td>{{ change.comments }}</td>
-            </tr>
-            <tr>
-                <td><strong>Changed By:</strong></td>
-                <td>{{ change.who }}</td>
-            </tr>
-            <tr>
-                <td><strong>Time:</strong></td>
-                <td>{{ change.when }}</td>
-            </tr>
-            <tr>
-                <td><strong>Repository:</strong></td>
-                <td>{{ change.repository }}</td>
-            </tr>
+        <tr>
+            <td><strong>Commit Message:</strong></td>
+            <td>{{ change.comments }}</td>
+        </tr>
+        <tr>
+            <td><strong>Changed By:</strong></td>
+            <td>{{ change.who }}</td>
+        </tr>
+        <tr>
+            <td><strong>Time:</strong></td>
+            <td>{{ change.when }}</td>
+        </tr>
+        <tr>
+            <td><strong>Repository:</strong></td>
+            <td>{{ change.repository }}</td>
+        </tr>
         </tbody>
     </table>
 {% endfor %}

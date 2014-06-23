@@ -28,7 +28,6 @@ positronic.brain.config import *` and make sure the symbol 'flows up' until it i
 topmost configuration file.
 """
 
-
 BuildmasterConfig = {
     'db': {'db_url': 'sqlite:///state.sqlite'},
     'slavePortnum': 9989,
@@ -39,6 +38,5 @@ BuildmasterConfig = {
     'slaves': [],
     'status': [],
 }
-
 
 BrainConfig = {}

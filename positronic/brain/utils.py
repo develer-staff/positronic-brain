@@ -23,7 +23,6 @@ This module contains miscellaneous utility functions.
 import binascii
 import os
 import os.path
-
 from urlparse import urlparse
 
 from buildbot.changes.svnpoller import SVNPoller
@@ -63,7 +62,8 @@ def has_change_source(filter_by, attr, value):
     - value: The value to compare to determine if a Change Source has already been added.
 
     """
-    for change_source in [c for c in BuildmasterConfig['change_source'] if isinstance(c, filter_by)]:
+    for change_source in [c for c in BuildmasterConfig['change_source'] if
+                          isinstance(c, filter_by)]:
         if getattr(change_source, attr, '') == value:
             return True
     else:

@@ -24,7 +24,6 @@ import os
 import os.path
 
 import jinja2
-
 from buildbot.buildslave import BuildSlave
 from buildbot.status.html import WebStatus
 from buildbot.status.mail import MailNotifier
@@ -73,22 +72,22 @@ def master(basedir, url, admins=[], email_from=None, title='BuildBot'):
 
     # Data retention
     # See: http://docs.buildbot.net/current/manual/cfg-global.html#horizons
-    BuildmasterConfig['buildHorizon'] = 100   # How many builds to keep.
+    BuildmasterConfig['buildHorizon'] = 100  # How many builds to keep.
     BuildmasterConfig['changeHorizon'] = 200  # How many Change(s) to keep.
-    BuildmasterConfig['eventHorizon'] = 50    # Connection/Disconnection to slaves to keep.
-    BuildmasterConfig['logHorizon'] = 50      # How many build logs to keep. Must be <= buildHorizon.
+    BuildmasterConfig['eventHorizon'] = 50  # Connection/Disconnection to slaves to keep.
+    BuildmasterConfig['logHorizon'] = 50  # How many build logs to keep. Must be <= buildHorizon.
 
     # Caches
     # See: http://docs.buildbot.net/current/manual/cfg-global.html#caches
     BuildmasterConfig['caches'] = {
-        'BuildRequests' : 10,
-        'Builds' : 500,
-        'Changes' : 100,
-        'chdicts' : 100,
-        'objectids' : 10,
-        'SourceStamps' : 20,
-        'ssdicts' : 20,
-        'usdicts' : 100,
+        'BuildRequests': 10,
+        'Builds': 500,
+        'Changes': 100,
+        'chdicts': 100,
+        'objectids': 10,
+        'SourceStamps': 20,
+        'ssdicts': 20,
+        'usdicts': 100,
     }
 
     # Launches the web interface with no authentication by default, allowing all users to start and
