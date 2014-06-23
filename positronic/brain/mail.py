@@ -20,6 +20,7 @@
 This module contains the message formatter used with the MailNotifier.
 """
 
+import datetime
 
 from buildbot.status.builder import Results
 from buildbot.process.buildstep import SUCCESS
@@ -68,7 +69,11 @@ def html_message_formatter(mode, name, build, results, master_status):
         if source_stamp.changes:
             changes.extend([c.asDict() for c in source_stamp.changes])
 
-    print 'Changes: %s' % changes
+    # FIXME: Ugly, this should be a responsibility of the template.
+    # TODO: Use a Jinja2 filter to do this.
+    for change in changes:
+        if 'when' in change:
+            change['when'] = datetime.datetime.fromtimestamp(change['when']).ctime()
 
     # Template context
     body = TEMPLATES_ENV.get_template('email.jinja2').render(
