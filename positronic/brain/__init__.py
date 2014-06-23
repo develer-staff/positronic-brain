@@ -26,7 +26,12 @@ should usually be the only import you need, since we take care to import and exp
 from this namespace.
 """
 
+# Monkey patch stuff.
+from positronic.brain.monkeypatch import patch_all
 
+patch_all()
+
+# Continue with standard bootstrap.
 from positronic.brain.base import master, worker
 from positronic.brain.config import BrainConfig, BuildmasterConfig
 from positronic.brain.job.freestyle import FreestyleJob
