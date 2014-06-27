@@ -62,8 +62,6 @@ class FreestyleJob(Job):
             builderNames=[self.name],
             change_filter=ChangeFilter(repository=repourl)))
 
-        return self
-
     def command(self, *args, **kwargs):
         env = {
             'BUILD': Interpolate('%(prop:buildnumber)s'),
@@ -78,8 +76,6 @@ class FreestyleJob(Job):
 
         self.add_step(ShellCommand(command=list(args), **kwargs))
 
-        return self
-
     def notify(self, *recipients):
         BuildmasterConfig['status'].append(MailNotifier(
             builders=[self.name],
@@ -88,5 +84,3 @@ class FreestyleJob(Job):
             messageFormatter=html_message_formatter,
             mode=['change', 'failing'],
             sendToInterestedUsers=False))
-
-        return self
