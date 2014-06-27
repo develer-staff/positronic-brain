@@ -38,8 +38,8 @@ class FreestyleJob(Job):
         add_artifact_pre_build_steps(self)
 
     def __exit__(self, type, value, traceback):
-        add_artifact_post_build_steps(self)
         # As the last step, we grab artifacts from the worker. This MUST always be the last step.
+        add_artifact_post_build_steps(self)
 
     def checkout(self, workdir, url, branch):
         repo_url = '%s/%s' % (url, branch)
