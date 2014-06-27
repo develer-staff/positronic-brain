@@ -42,25 +42,15 @@ class FreestyleJob(Job):
         # As the last step, we grab artifacts from the worker. This MUST always be the last step.
 
     def checkout(self, workdir, url, branch):
-        repourl = '%s/%s' % (url, branch)
+        repo_url = '%s/%s' % (url, branch)
 
         self.add_step(SVN(
             mode='full',
             method='clean',
-            repourl=repourl,
+            repourl=repo_url,
             workdir=workdir))
 
-        if not has_svn_change_source(repourl):
-            BuildmasterConfig['change_source'].append(SVNPoller(
-                svnurl=repourl,
-                pollInterval=120,
-                histmax=10))
-
-        BuildmasterConfig['schedulers'].append(SingleBranchScheduler(
-            name=scheduler_name(self, 'svn-' + hashify(repourl)),
-            treeStableTimer=60,
-            builderNames=[self.name],
-            change_filter=ChangeFilter(repository=repourl)))
+        self.watch(url, branch)
 
     def command(self, *args, **kwargs):
         env = {
@@ -84,3 +74,18 @@ class FreestyleJob(Job):
             messageFormatter=html_message_formatter,
             mode=['change', 'failing'],
             sendToInterestedUsers=False))
+
+    def watch(self, url, branch):
+        repo_url = '%s/%s' % (url, branch)
+
+        if not has_svn_change_source(repo_url):
+            BuildmasterConfig['change_source'].append(SVNPoller(
+                svnurl=repo_url,
+                pollInterval=120,
+                histmax=10))
+
+        BuildmasterConfig['schedulers'].append(SingleBranchScheduler(
+            name=scheduler_name(self, 'svn-' + hashify(repo_url)),
+            treeStableTimer=60,
+            builderNames=[self.name],
+            change_filter=ChangeFilter(repository=repo_url)))
