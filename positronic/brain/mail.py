@@ -27,7 +27,7 @@ from buildbot.process.buildstep import SUCCESS
 from jinja2 import Environment, PackageLoader
 
 
-LOG_MAX_LINES = 100
+LOG_MAX_LINES = 250
 TEMPLATES_ENV = Environment(loader=PackageLoader('positronic.brain', 'templates'))
 
 
@@ -36,7 +36,7 @@ TEMPLATES_ENV = Environment(loader=PackageLoader('positronic.brain', 'templates'
 def html_message_formatter(mode, name, build, results, master_status):
     """Provide a customized message to Buildbot's MailNotifier.
 
-    The last 100 lines of the log are provided as well as the changes relevant to the build. Message
+    The last 250 lines of the log are provided as well as the changes relevant to the build. Message
     content is formatted as html.
 
     """
