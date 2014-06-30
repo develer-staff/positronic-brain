@@ -20,6 +20,7 @@ from buildbot.changes.filter import ChangeFilter
 from buildbot.changes.svnpoller import SVNPoller
 from buildbot.process.properties import Interpolate
 from buildbot.schedulers.basic import SingleBranchScheduler
+from buildbot.schedulers.triggerable import Triggerable
 from buildbot.status.mail import MailNotifier
 from buildbot.steps.shell import ShellCommand
 from buildbot.steps.source.svn import SVN
@@ -36,6 +37,11 @@ class FreestyleJob(Job):
         super(FreestyleJob, self).__init__(name, workers)
 
         add_artifact_pre_build_steps(self)
+
+        # Add a "triggerable" build step so that other jobs can trigger us.
+        BuildmasterConfig['schedulers'].append(Triggerable(
+            name=scheduler_name(self, 'trigger'),
+            builderNames=[self.name]))
 
     def __exit__(self, type, value, traceback):
         # As the last step, we grab artifacts from the worker. This MUST always be the last step.

@@ -19,6 +19,7 @@
 from buildbot.config import BuilderConfig
 from buildbot.process.factory import BuildFactory
 from buildbot.schedulers.forcesched import ForceScheduler
+from buildbot.steps.trigger import Trigger
 
 from positronic.brain.config import BuildmasterConfig
 from positronic.brain import utils
@@ -57,4 +58,16 @@ class Job(object):
         pass
 
     def add_step(self, step):
+        """Adds a build step on this Job."""
         self.build.addStep(step)
+
+    def trigger(self, job_or_jobs):
+        """Adds a build step which triggers execution of another job."""
+        if type(job_or_jobs) is list:
+            self.add_step(Trigger(
+                schedulerNames=[scheduler_name(j, 'trigger') for j in job_or_jobs],
+                waitForFinish=True))
+        else:
+            self.add_step(Trigger(
+                schedulerNames=[scheduler_name(job_or_jobs, 'trigger')],
+                waitForFinish=True))

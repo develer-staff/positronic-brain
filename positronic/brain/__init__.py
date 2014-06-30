@@ -35,12 +35,14 @@ patch_all()
 from positronic.brain.base import master, worker
 from positronic.brain.config import BrainConfig, BuildmasterConfig
 from positronic.brain.job.freestyle import FreestyleJob
+from positronic.brain.job.workerpool import WorkerPoolJob
 
 
 __all__ = [
     'BrainConfig',
     'BuildmasterConfig',
     'FreestyleJob',
+    'WorkerPoolJob',
     'master',
     'worker',
 ]
