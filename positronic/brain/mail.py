@@ -33,7 +33,7 @@ TEMPLATES_ENV = Environment(loader=PackageLoader('positronic.brain', 'templates'
 
 # This function was copied (with some minor edits) from:
 # http://docs.buildbot.net/current/manual/cfg-statustargets.html#mailnotifier
-def html_message_formatter(mode, name, build, results, master_status):
+def html_message_formatter(_, name, build, results, master_status):
     """Provide a customized message to Buildbot's MailNotifier.
 
     The last 250 lines of the log are provided as well as the changes relevant to the build. Message
