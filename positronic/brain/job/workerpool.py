@@ -94,12 +94,16 @@ class WorkerPoolJob(Job):
         self.trigger(self.pool.values())
 
     def __enter__(self):
-        # Do nothing
+        # Forward context manager events to all jobs in the pool.
+        for job in self.pool.values():
+            job.__enter__()
+
         return self
 
     def __exit__(self, type, value, traceback):
-        # Do nothing
-        pass
+        # Forward context manager events to all jobs in the pool.
+        for job in self.pool.values():
+            job.__exit__(type, value, traceback)
 
     def __getattribute__(self, name):
         if hasattr(self, name):
