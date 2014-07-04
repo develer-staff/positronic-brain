@@ -1,7 +1,7 @@
 Positronic Brain
 ================
 
-<img align="right" src="logo.png"/>
+<img align="right" src="logo.png" width="200" height="200"/>
 
 > *Opinionated BuildBot workflow.*
 
