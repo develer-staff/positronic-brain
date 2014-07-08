@@ -56,7 +56,7 @@
 <!-- Logs of last failing build step -->
 <!-- =============================== -->
 
-{% if result != 'success' and log %}
+{% if log %}
     <h3>Last {{ log.length }} Lines From Build Log</h3>
     <p><a href="{{ log.url }}">{{ log.url }}</a></p>
     <pre>

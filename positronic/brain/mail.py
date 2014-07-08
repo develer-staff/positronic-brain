@@ -61,6 +61,10 @@ def html_message_formatter(_, name, build, results, master_status):
                                                 failed_log.getName()),
             }
 
+    # If we have logs but the result is SUCCESS, something is broken.
+    if results == SUCCESS:
+        assert log is None
+
     # Changes
     changes = []
 
