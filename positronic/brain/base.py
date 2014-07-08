@@ -96,7 +96,14 @@ def master(basedir, url, admins=[], email_from=None, title='BuildBot'):
         WebStatus(
             authz=Authz(forceBuild=True, stopBuild=True),
             http_port=8010,
-            jinja_loaders=[jinja2.PackageLoader('positronic.brain.status.web', 'templates')])
+            change_hook_dialects={
+                'base': True,
+                'bitbucket': True,
+                'github': True,
+            },
+            jinja_loaders=[
+                jinja2.PackageLoader('positronic.brain.status.web', 'templates'),
+            ])
     ]
 
     # These people receive emails for EVERYTHING that happens within this BuildBot.
