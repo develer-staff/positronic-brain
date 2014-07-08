@@ -16,6 +16,8 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
 
+from random import randrange
+
 from buildbot.changes.filter import ChangeFilter
 from buildbot.changes.svnpoller import SVNPoller
 from buildbot.process.properties import Interpolate
@@ -87,8 +89,8 @@ class FreestyleJob(Job):
         if not has_svn_change_source(repo_url):
             BuildmasterConfig['change_source'].append(SVNPoller(
                 svnurl=repo_url,
-                pollInterval=120,
-                histmax=10))
+                pollInterval=300 + randrange(0, 60),
+                histmax=5))
 
         BuildmasterConfig['schedulers'].append(SingleBranchScheduler(
             name=scheduler_name(self, 'svn-' + hashify(repo_url)),
