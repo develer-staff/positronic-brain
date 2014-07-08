@@ -4,3 +4,6 @@
 *.fuse*
 
 .idea/
+
+.coverage
+coverage.xml
