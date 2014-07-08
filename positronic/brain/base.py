@@ -61,7 +61,7 @@ def master(basedir, url, admins=[], email_from=None, title='BuildBot'):
     BrainConfig['basedir'] = basedir
     BrainConfig['emailFrom'] = email_from if email_from else get_default_email_address(url)
     BrainConfig['emailLookup'] = BrainConfig['emailFrom'].split('@')[-1]
-    BrainConfig['maxArtifacts'] = 10
+    BrainConfig['maxArtifacts'] = 5
     BrainConfig['artifactsDir'] = os.path.join(basedir, 'public_html', 'artifacts')
 
     # Site definition
