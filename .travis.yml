@@ -6,6 +6,6 @@ install:
   - pip install -r requirements.txt
   - pip install coveralls
 script:
-  - py.test --cov positronic positronic
+  - py.test --cov positronic
 after_success:
   - coveralls
