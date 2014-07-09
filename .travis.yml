@@ -8,4 +8,4 @@ install:
 script:
   - py.test --cov positronic
 after_success:
-  - coveralls
+  - coveralls --verbose
