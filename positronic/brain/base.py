@@ -25,6 +25,7 @@ import os.path
 
 import jinja2
 from buildbot.buildslave import BuildSlave
+from buildbot.changes.pb import PBChangeSource
 from buildbot.status.html import WebStatus
 from buildbot.status.mail import MailNotifier
 from buildbot.status.web.authz import Authz
@@ -130,3 +131,14 @@ def worker(name, password):
     # In general, our slaves assume that they have full control of the machine they are running on,
     # thus, we force at most one job running on each node at a time.
     BuildmasterConfig['slaves'].append(BuildSlave(name, password, max_builds=1))
+
+
+def change_source(name, password):
+    """
+    Adds a new change source. This causes BuildBot to start listening on TCP port 9999. Make sure
+    to have it behind a firewall and open only to addresses from which you want to listen for
+    change notifications.
+
+    """
+    BuildmasterConfig['change_source'].append(
+        PBChangeSource(port=9999, user=name, passwd=password))

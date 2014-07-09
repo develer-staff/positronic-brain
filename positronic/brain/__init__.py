@@ -32,7 +32,7 @@ from positronic.brain.monkeypatch import patch_all
 patch_all()
 
 # Continue with standard bootstrap.
-from positronic.brain.base import master, worker
+from positronic.brain.base import change_source, master, worker
 from positronic.brain.config import BrainConfig, BuildmasterConfig
 from positronic.brain.job.freestyle import FreestyleJob
 from positronic.brain.job.workerpool import WorkerPoolJob
@@ -43,6 +43,7 @@ __all__ = [
     'BuildmasterConfig',
     'FreestyleJob',
     'WorkerPoolJob',
+    'change_source',
     'master',
     'worker',
 ]
