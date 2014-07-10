@@ -58,8 +58,6 @@ class FreestyleJob(Job):
             repourl=repo_url,
             workdir=workdir))
 
-        self.watch(url, branch)
-
     def command(self, *args, **kwargs):
         env = {
             'BUILD': Interpolate('%(prop:buildnumber)s'),
