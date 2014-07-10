@@ -30,7 +30,7 @@ from buildbot.changes.svnpoller import SVNPoller
 from positronic.brain.config import BuildmasterConfig
 
 
-def is_dir_in_change(change, directories):
+def is_dir_in_change(directories, change):
     """
     :param change: A list of path strings
     :param directories: A list of path strings

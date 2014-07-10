@@ -39,15 +39,15 @@ def test_append_dir_sep():
 def test_is_dir_in_change(change):
     change.files = ['test_dir1/file1.py', 'test_dir2/file2.py']
 
-    assert not is_dir_in_change(change, ['test_bogus'])
-    assert not is_dir_in_change(change, ['test'])
-    assert not is_dir_in_change(change, ['test_dir'])
-    assert not is_dir_in_change(change, ['file1'])
-    assert not is_dir_in_change(change, ['file1.py'])
-    assert is_dir_in_change(change, ['test_dir1'])
-    assert is_dir_in_change(change, ['test_dir2'])
-    assert is_dir_in_change(change, ['test_dir1', 'test_dir2'])
-    assert is_dir_in_change(change, ['test_dir2', 'test_dir1'])
+    assert not is_dir_in_change(['test_bogus'], change)
+    assert not is_dir_in_change(['test'], change)
+    assert not is_dir_in_change(['test_dir'], change)
+    assert not is_dir_in_change(['file1'], change)
+    assert not is_dir_in_change(['file1.py'], change)
+    assert is_dir_in_change(['test_dir1'], change)
+    assert is_dir_in_change(['test_dir2'], change)
+    assert is_dir_in_change(['test_dir1', 'test_dir2'], change)
+    assert is_dir_in_change(['test_dir2', 'test_dir1'], change)
 
 
 def test_has_svn_change_source():

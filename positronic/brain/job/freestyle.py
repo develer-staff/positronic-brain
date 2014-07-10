@@ -16,6 +16,7 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
 
+from functools import partial
 from random import randrange
 
 from buildbot.changes.filter import ChangeFilter
@@ -104,6 +105,6 @@ class FreestyleJob(Job):
         """
         BuildmasterConfig['schedulers'].append(SingleBranchScheduler(
             builderNames=[self.name],
-            change_filter=ChangeFilter(filter_fn=is_dir_in_change),
+            change_filter=ChangeFilter(filter_fn=partial(is_dir_in_change, paths)),
             name=scheduler_name(self, 'filter-' + hashify(''.join(paths))),
             treeStableTimer=60))
