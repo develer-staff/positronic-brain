@@ -18,7 +18,7 @@
 
 from buildbot.config import BuilderConfig
 from buildbot.process.factory import BuildFactory
-from buildbot.schedulers.forcesched import ForceScheduler
+from buildbot.schedulers.forcesched import ForceScheduler, FixedParameter
 from buildbot.steps.trigger import Trigger
 
 from positronic.brain.config import BuildmasterConfig
@@ -49,7 +49,14 @@ class Job(object):
 
         BuildmasterConfig['schedulers'].append(ForceScheduler(
             name=scheduler_name(self, 'force'),
-            builderNames=[self.name]))
+            builderNames=[self.name],
+            branch=FixedParameter(name="reason", default=""),
+            reason=FixedParameter(name="reason", default="Forced build"),
+            revision=FixedParameter(name="revision", default=""),
+            repository=FixedParameter(name="repository", default=""),
+            project=FixedParameter(name="project", default=""),
+            properties=[],
+            username=FixedParameter(name="username", default="WebUI")))
 
     def __enter__(self):
         return self
