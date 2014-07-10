@@ -19,8 +19,8 @@
 from random import randrange
 
 from buildbot.changes.filter import ChangeFilter
-from buildbot.changes.svnpoller import SVNPoller
 from buildbot.process.properties import Interpolate
+from buildbot.changes.svnpoller import SVNPoller
 from buildbot.schedulers.basic import SingleBranchScheduler
 from buildbot.schedulers.triggerable import Triggerable
 from buildbot.status.mail import MailNotifier
@@ -31,7 +31,7 @@ from positronic.brain.artifact import add_artifact_pre_build_steps, add_artifact
 from positronic.brain.config import BrainConfig, BuildmasterConfig
 from positronic.brain.job import Job
 from positronic.brain.mail import html_message_formatter
-from positronic.brain.utils import has_svn_change_source, hashify, scheduler_name
+from positronic.brain.utils import has_svn_change_source, hashify, scheduler_name, is_dir_in_change
 
 
 class FreestyleJob(Job):
@@ -95,3 +95,15 @@ class FreestyleJob(Job):
             treeStableTimer=60,
             builderNames=[self.name],
             change_filter=ChangeFilter(repository=repo_url)))
+
+    def watch_paths(self, paths):
+        """
+        Start the build if an incoming change-set contains files that begin with the given
+        directory names.
+
+        """
+        BuildmasterConfig['schedulers'].append(SingleBranchScheduler(
+            builderNames=[self.name],
+            change_filter=ChangeFilter(filter_fn=is_dir_in_change),
+            name=scheduler_name(self, 'filter-' + hashify(''.join(paths))),
+            treeStableTimer=60))

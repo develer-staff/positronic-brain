@@ -30,6 +30,31 @@ from buildbot.changes.svnpoller import SVNPoller
 from positronic.brain.config import BuildmasterConfig
 
 
+def is_dir_in_change(change, directories):
+    """
+    :param change: A list of path strings
+    :param directories: A list of path strings
+    :type change: buildbot.changes.changes.Change
+    :return: True if a file in `change` starts with a path from `directories`
+
+    """
+    for change_dirname in append_dir_sep([os.path.dirname(f) for f in change.files]):
+        for directory in append_dir_sep(directories):
+            if change_dirname.startswith(directory):
+                return True
+    else:
+        return False
+
+
+def append_dir_sep(item_or_items):
+    sep = os.path.sep
+
+    if type(item_or_items) is list:
+        return [i if i.endswith(sep) else i + sep for i in item_or_items]
+    else:
+        return item_or_items if item_or_items.endswith(sep) else item_or_items + sep
+
+
 def abspath(p):
     return os.path.abspath(os.path.expanduser(p))
 

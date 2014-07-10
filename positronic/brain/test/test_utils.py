@@ -16,11 +16,38 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
 
+from mock import patch
+
 from buildbot.changes.svnpoller import SVNPoller
 
 from positronic.brain.config import BuildmasterConfig
-from positronic.brain.utils import get_default_email_address, has_svn_change_source, name, \
-    scheduler_name
+from positronic.brain.utils import append_dir_sep, get_default_email_address, \
+    has_svn_change_source, name, scheduler_name, is_dir_in_change
+
+
+def test_append_dir_sep():
+    assert append_dir_sep('test') == 'test/'
+    assert append_dir_sep('test/') == 'test/'
+    assert append_dir_sep(['test']) == ['test/']
+    assert append_dir_sep(['test/']) == ['test/']
+    assert append_dir_sep(['test', 'test']) == ['test/', 'test/']
+    assert append_dir_sep(['test/', 'test']) == ['test/', 'test/']
+    assert append_dir_sep(['test/', 'test/']) == ['test/', 'test/']
+
+
+@patch('buildbot.changes.changes.Change')
+def test_is_dir_in_change(change):
+    change.files = ['test_dir1/file1.py', 'test_dir2/file2.py']
+
+    assert not is_dir_in_change(change, ['test_bogus'])
+    assert not is_dir_in_change(change, ['test'])
+    assert not is_dir_in_change(change, ['test_dir'])
+    assert not is_dir_in_change(change, ['file1'])
+    assert not is_dir_in_change(change, ['file1.py'])
+    assert is_dir_in_change(change, ['test_dir1'])
+    assert is_dir_in_change(change, ['test_dir2'])
+    assert is_dir_in_change(change, ['test_dir1', 'test_dir2'])
+    assert is_dir_in_change(change, ['test_dir2', 'test_dir1'])
 
 
 def test_has_svn_change_source():
