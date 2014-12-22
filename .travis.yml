@@ -3,9 +3,14 @@ language: python
 python:
   - "2.6"
   - "2.7"
+env:
+  - BUILDBOT_VERSION=0.8.8  # Current Ubuntu LTS
+  - BUILDBOT_VERSION=0.8.9  # Next Ubuntu LTS
+  - BUILDBOT_VERSION=0.8.10 # Upstream
 install:
   - pip install -r requirements.txt
   - pip install coveralls
+  - pip install buildbot==${BUILDBOT_VERSION}
 script:
   - py.test --cov positronic
 after_success:
