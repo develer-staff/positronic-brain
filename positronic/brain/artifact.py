@@ -22,11 +22,11 @@ necessary to host them on worker nodes and then transferring them back to the ma
 """
 
 from os import listdir
-from os.path import join
+from os.path import isdir, join
 from shutil import rmtree
 
 from buildbot.process.buildstep import BuildStep
-from buildbot.process.buildstep import SUCCESS, FAILURE
+from buildbot.process.buildstep import SUCCESS
 from buildbot.process.properties import Interpolate
 from buildbot.steps.master import SetProperty
 from buildbot.steps.slave import MakeDirectory
@@ -40,48 +40,47 @@ from positronic.brain.config import BrainConfig
 class PruneOldArtifacts(BuildStep):
     name = 'remove old artifacts'
 
-    alwaysRun = False
-    haltOnFailure = True
-
     def __init__(self, **kwargs):
         super(PruneOldArtifacts, self).__init__(**kwargs)
 
     def start(self):
-        log = self.addLog('stdio')
-        artifacts = Interpolate(join(BrainConfig['artifactsDir'], '%(prop:buildername)s'))
-        artifacts = artifacts.getRenderingFor(self).result
+        root = BrainConfig['artifactsDir']
         max_artifacts = BrainConfig['maxArtifacts']
+        artifacts = Interpolate(join(root, '%(prop:buildername)s')).getRenderingFor(self).result
 
-        log.addStdout('Artifacts directory: %s\n' % artifacts)
-        log.addStdout('Max old builds: %s\n' % max_artifacts)
-
-        try:
-            # This works under the assumption that all directory names are build number (integers).
-            all_build_dirs = map(str, sorted(map(int, listdir(artifacts))))
-            old_build_dirs = all_build_dirs[:-max_artifacts]
-        except ValueError:
-            self.finished(FAILURE)
-
-            return
-
-        log.addStdout('All artifacts: %s\n' % all_build_dirs)
-        log.addStdout('Old artifacts: %s\n' % old_build_dirs)
-
-        for build_dir in all_build_dirs:
-            abs_build_dir = join(artifacts, build_dir)
-
-            if not listdir(abs_build_dir):
-                rmtree(abs_build_dir)
-
-                log.addStdout('Deleted empty artifacts directory: %s\n' % abs_build_dir)
-            elif build_dir in old_build_dirs:
-                rmtree(abs_build_dir)
-
-                log.addStdout('Deleted old artifacts directory: %s\n' % abs_build_dir)
-
-        log.finish()
+        remove_obsolete_artifact_dirs(artifacts, max_artifacts)
 
         self.finished(SUCCESS)
+
+
+def remove_obsolete_artifact_dirs(root, max_artifacts):
+    """Remove obsolete artifacts from the given root directory.
+
+    This function asserts that the root directory does not contain files and that all directory
+    names can be converted to integers in strictly increasing order. Each directory name should
+    correspond to a build number for that particular builder.
+
+    This function also removes empty artifacts directories.
+    """
+    assert max_artifacts > 0
+
+    # This ensures we only get files or directories with names that can be converted to an integer,
+    # we also first sort it in increasing order. Strictly increasing order should be guaranteed by
+    # fs semantics: you can't have two directories with the same name!
+    dirs = map(str, sorted(map(int, listdir(root))))
+    paths = [join(root, d) for d in dirs]
+
+    # We only want directories.
+    for p in paths:
+        assert isdir(p)
+
+    paths_to_remove = paths[:-max_artifacts]
+
+    for p in paths:
+        if not listdir(p):
+            rmtree(p)
+        elif p in paths_to_remove:
+            rmtree(p)
 
 
 def add_artifact_pre_build_steps(job):
@@ -105,7 +104,9 @@ def add_artifact_post_build_steps(job):
     job.add_step(DirectoryUpload(
         name='collect artifacts',
         slavesrc=Interpolate('%(prop:artifactsdir)s'),
-        masterdest=Interpolate(join(BrainConfig['artifactsDir'], '%(prop:buildername)s', '%(prop:buildnumber)s')),
-        url=Interpolate(BuildmasterConfig['buildbotURL'] + 'artifacts/%(prop:buildername)s/%(prop:buildnumber)s/')))
+        masterdest=Interpolate(
+            join(BrainConfig['artifactsDir'], '%(prop:buildername)s', '%(prop:buildnumber)s')),
+        url=Interpolate(BuildmasterConfig[
+                            'buildbotURL'] + 'artifacts/%(prop:buildername)s/%(prop:buildnumber)s/')))
 
     job.add_step(PruneOldArtifacts())
