@@ -7,7 +7,7 @@ Positronic Brain
 
 [![Build Status](https://img.shields.io/travis/develersrl/positronic-brain.svg?style=flat)](https://travis-ci.org/develersrl/positronic-brain)
 [![Coverage Status](http://img.shields.io/coveralls/develersrl/positronic-brain.svg?style=flat)](https://coveralls.io/r/develersrl/positronic-brain)
-[![License](http://img.shields.io/badge/license-GPLv2-blue.svg?style=flat)](http://choosealicense.com/licenses/gpl-2.0/)
+[![License](http://img.shields.io/badge/license-Apache%202.0-blue.svg?style=flat)](http://choosealicense.com/licenses/apache-2.0/)
 
 Positronic Brain makes it extremely easy to get up and running with your BuildBot server by dropping
 few lines in your `master.cfg` file. Gone are the days of having to figure out how to wire all
