@@ -4,6 +4,10 @@
 *.fuse*
 
 .idea/
+config-templates/master/*.log
+config-templates/master/buildbot_travis/
+config-templates/master/buildbot_travis-job/
+config-templates/master/var
 
 .coverage
 coverage.xml
