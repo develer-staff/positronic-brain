@@ -26,9 +26,10 @@ import os.path
 import jinja2
 from buildbot.buildslave import BuildSlave
 from buildbot.changes.pb import PBChangeSource
-from buildbot.status.html import WebStatus
 from buildbot.status.mail import MailNotifier
 from buildbot.status.web.authz import Authz
+
+from buildbot_travis.status import CiWebStatus
 
 from positronic.brain.config import BrainConfig, BuildmasterConfig
 from positronic.brain.mail import html_message_formatter
@@ -96,7 +97,7 @@ def master(basedir, url, admins=None, email_from=None, title='BuildBot', listen_
     # Launches the web interface with no authentication by default, allowing all users to start and
     # stop builds.
     BuildmasterConfig['status'] = [
-        WebStatus(
+        CiWebStatus(
             authz=Authz(forceBuild=True, stopBuild=True),
             http_port=listen_port,
             change_hook_dialects={
@@ -104,8 +105,9 @@ def master(basedir, url, admins=None, email_from=None, title='BuildBot', listen_
                 'bitbucket': True,
                 'github': True,
             },
+            vardir=os.path.join(basedir, "var"),
             jinja_loaders=[
-                jinja2.PackageLoader('positronic.brain.status.web', 'templates'),
+                jinja2.PackageLoader('buildbot_travis.status', 'templates'),
             ])
     ]
 
