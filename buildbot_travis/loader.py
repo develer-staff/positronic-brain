@@ -120,19 +120,13 @@ class Loader(object):
             for p in safe_load(config).get("projects", []):
                 self.define_travis_builder(**p)
 
-    def get_spawner_slaves(self):
-        return ['spawner']
-
-    def get_runner_slaves(self):
-        return [s.slavename for s in self.config['slaves'] if s.slavename is not 'spawner']
-
     def define_travis_builder(self, name, repository, branch=None, vcs_type=None, username=None,
                               password=None, subrepos=None):
         job_name = "%s-job" % name
         spawner_name = name
 
         if not repository.endswith("/"):
-            repository = repository + "/"
+            repository += "/"
 
         if not username and not password:
             p = urlparse.urlparse(repository)
@@ -182,7 +176,7 @@ class Loader(object):
         self.config['builders'].append(BuilderConfig(
             name=spawner_name,
             nextBuild=nextBuild,
-            slavenames=self.get_spawner_slaves(),
+            slavenames=["spawner"],
             properties=self.properties,
             category="spawner",
             factory=TravisSpawnerFactory(
@@ -208,6 +202,9 @@ class Loader(object):
         ))
 
         self.setup_poller(repository, vcs_type, branch, name, username, password)
+
+    def get_runner_slaves(self):
+        return [s.slavename for s in self.config['slaves'] if s.slavename is not 'spawner']
 
     def setup_poller(self, repository, vcs_type=None, branch=None, project=None, username=None,
                      password=None):
