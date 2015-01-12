@@ -16,7 +16,7 @@ setup(
         'Topic :: Software Development :: Libraries :: Python Modules',
         'Topic :: Software Development :: Testing',
     ],
-    packages=['positronic.brain'],
+    packages=['buildbot_travis', 'positronic.brain'],
     license='GNU General Public License 3',
     long_description=open('README.md').read(),
 )
