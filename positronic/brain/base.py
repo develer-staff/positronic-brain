@@ -35,7 +35,7 @@ from positronic.brain.mail import html_message_formatter
 from positronic.brain.utils import get_default_email_address
 
 
-def master(basedir, url, admins=[], email_from=None, title='BuildBot', listen_port=8010, slave_listen_port=9989):
+def master(basedir, url, admins=None, email_from=None, title='BuildBot', listen_port=8010, slave_listen_port=9989):
     """Configures the BuildBot master.
 
     This should be the first call in your BuildBot configuration file. It spawns the web server on
