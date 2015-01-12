@@ -14,7 +14,6 @@
 
 import urlparse
 import os
-import shelve
 import subprocess
 
 from twisted.python import log
@@ -119,13 +118,6 @@ class Loader(object):
     def load(self, path):
         for p in safe_load(path).get("projects", []):
             self.define_travis_builder(**p)
-
-    def load_shelve(self, path):
-        shelf = shelve.open(path)
-        for project in shelf.keys():
-            definition = shelf[project]
-            self.define_travis_builder(**definition)
-        shelf.close()
 
     def get_spawner_slaves(self):
         slaves = [s.slavename for s in self.config['slaves'] if isinstance(s, BuildSlave)]
