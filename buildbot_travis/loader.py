@@ -15,9 +15,12 @@
 import urlparse
 import os
 import shelve
+import subprocess
 
 from twisted.python import log
 from buildbot.config import BuilderConfig
+from buildbot.buildslave import AbstractLatentBuildSlave
+from buildbot.buildslave import BuildSlave
 from buildbot.schedulers.triggerable import Triggerable
 from buildbot.schedulers.basic import SingleBranchScheduler, AnyBranchScheduler
 from buildbot.changes import gitpoller
@@ -125,13 +128,10 @@ class Loader(object):
         shelf.close()
 
     def get_spawner_slaves(self):
-        from buildbot.buildslave import BuildSlave
-
         slaves = [s.slavename for s in self.config['slaves'] if isinstance(s, BuildSlave)]
         return slaves
 
     def get_runner_slaves(self):
-        from buildbot.buildslave import AbstractLatentBuildSlave
 
         slaves = [s.slavename for s in self.config['slaves'] if
                   isinstance(s, AbstractLatentBuildSlave)]
@@ -249,8 +249,6 @@ class Loader(object):
         ))
 
     def get_repository_root(self, repository, username=None, password=None):
-        import subprocess
-
         options = {}
         cmd = ["svn", "info", repository, "--non-interactive"]
         if username:
