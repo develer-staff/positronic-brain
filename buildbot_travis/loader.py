@@ -152,14 +152,14 @@ class Loader(object):
             properties=self.properties,
             #mergeRequests = mergeRequests,
             mergeRequests=False,
-            env=dict(
-                DEBIAN_FRONTEND="noninteractive",
-                CI="true",
-                TRAVIS="true",
-                HAS_JOSH_K_SEAL_OF_APPROVAL="true",
-                LANG="en_GB.UTF-8",
-                LC_ALL="en_GB.UTF-8",
-            ),
+            env={
+                "CI": "true",
+                "DEBIAN_FRONTEND": "noninteractive",
+                "HAS_JOSH_K_SEAL_OF_APPROVAL": "true",
+                "LANG": "en_GB.UTF-8",
+                "LC_ALL": "en_GB.UTF-8",
+                "TRAVIS": "true",
+            },
             factory=TravisFactory(
                 projectname=spawner_name,
                 repository=repository,
