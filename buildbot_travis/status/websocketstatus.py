@@ -4,7 +4,7 @@
 # you may not use this file except in compliance with the License.
 # You may obtain a copy of the License at
 #
-#   http://www.apache.org/licenses/LICENSE-2.0
+# http://www.apache.org/licenses/LICENSE-2.0
 #
 # Unless required by applicable law or agreed to in writing, software
 # distributed under the License is distributed on an "AS IS" BASIS,
@@ -12,28 +12,24 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-import json, urlparse
+import json
+import urlparse
 
-from twisted.application import strports
-from twisted.internet.protocol import Protocol, Factory
-from twisted.web import resource
-from twisted.internet import task
-
-from buildbot import interfaces, util
 from buildbot.status import base
 from buildbot.status.web.base import HtmlResource
+
 
 try:
     from buildbot.status.results import FAILURE, SUCCESS, EXCEPTION, Results
 except ImportError:
-    from buildbot.status.builder import FAILURE,SUCCESS, EXCEPTION, Results
+    from buildbot.status.builder import FAILURE, SUCCESS, EXCEPTION, Results
 
 from twisted.python import log
 
 from twisted.internet.protocol import Protocol
 
-class WSBuildHandler(Protocol, base.StatusReceiver):
 
+class WSBuildHandler(Protocol, base.StatusReceiver):
     def dataReceived(self, msg):
         log.msg('msg: ', self.transport.getPeer())
 
@@ -77,13 +73,15 @@ class WSBuildHandler(Protocol, base.StatusReceiver):
 
     def getBuildMetadata(self, build):
         builder = build.getBuilder()
-        builder_conf = filter(lambda n: n.name == builder.getName(), builder.master.config.builders)[0]
+        builder_conf = \
+        filter(lambda n: n.name == builder.getName(), builder.master.config.builders)[0]
 
         if builder_conf.properties.get('classification', None) != "ci":
             return
 
         try:
             from buildbot_travis.factories import TravisFactory
+
             if isinstance(builder_conf.factory, TravisFactory):
                 return
         except ImportError:
@@ -95,21 +93,21 @@ class WSBuildHandler(Protocol, base.StatusReceiver):
             status = Results[build.getResults()]
 
         attrs = {
-          'id': "%s-%s" % (builder.getName(), build.getNumber()),
-          'builder': builder.getName(),
-          'status': status,
-          #'buildURL': self.status.getURLForThing(build),
-          #'buildbotURL': self.status.getBuildbotURL(),
-          'buildText': build.getText(),
-          'buildProperties': dict(((x, y or '') for (x,y,z) in build.getProperties().asList())),
-          'slavename': build.getSlavename(),
-          'reason':  build.getReason(),
-          'responsibleUsers': build.getResponsibleUsers(),
-          'branch': "",
-          'revision': "",
-          'patch': "",
-          'changes': [],
-          }
+            'id': "%s-%s" % (builder.getName(), build.getNumber()),
+            'builder': builder.getName(),
+            'status': status,
+            #'buildURL': self.status.getURLForThing(build),
+            #'buildbotURL': self.status.getBuildbotURL(),
+            'buildText': build.getText(),
+            'buildProperties': dict(((x, y or '') for (x, y, z) in build.getProperties().asList())),
+            'slavename': build.getSlavename(),
+            'reason': build.getReason(),
+            'responsibleUsers': build.getResponsibleUsers(),
+            'branch': "",
+            'revision': "",
+            'patch': "",
+            'changes': [],
+        }
 
         if build.finished:
             attrs['finished'] = build.finished
@@ -155,7 +153,7 @@ class WSBuildResource(HtmlResource):
         netloc = bb_url.hostname + ":8087"
         path = "/ws/build"
 
-        cxt['ws_url'] = urlparse.urlunparse((scheme, netloc, path, '', '',''))
+        cxt['ws_url'] = urlparse.urlunparse((scheme, netloc, path, '', '', ''))
 
         template = req.site.buildbot_service.templates.get_template("10foot.html")
         return template.render(**cxt)

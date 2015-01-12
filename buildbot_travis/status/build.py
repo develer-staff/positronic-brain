@@ -4,7 +4,7 @@
 # you may not use this file except in compliance with the License.
 # You may obtain a copy of the License at
 #
-#   http://www.apache.org/licenses/LICENSE-2.0
+# http://www.apache.org/licenses/LICENSE-2.0
 #
 # Unless required by applicable law or agreed to in writing, software
 # distributed under the License is distributed on an "AS IS" BASIS,
@@ -12,12 +12,12 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-import urllib, time
-from twisted.python import log
-from twisted.internet import defer
+import urllib
+import time
 
+from twisted.internet import defer
 from buildbot.status.web.base import HtmlResource, \
-     css_classes, path_to_build, path_to_builder
+    css_classes, path_to_build, path_to_builder
 from buildbot.status.results import SUCCESS, WARNINGS, FAILURE, SKIPPED
 from buildbot.status.results import EXCEPTION, RETRY
 from buildbot import util
@@ -31,7 +31,7 @@ css_classes = {
     EXCEPTION: "important",
     RETRY: "important",
     None: "",
-    }
+}
 
 
 class Build(HtmlResource):
@@ -45,7 +45,7 @@ class Build(HtmlResource):
         return "%s build #%d" % (
             self.build_status.getBuilder().getName(),
             self.build_status.getNumber(),
-            )
+        )
 
     @defer.inlineCallbacks
     def getPending(self, request):
@@ -80,7 +80,7 @@ class Build(HtmlResource):
 
             # How long has it been pending?
             info['start'] = time.strftime("%b %d %H:%M:%S",
-                                      time.localtime(submitTime))
+                                          time.localtime(submitTime))
             info['elapsed'] = util.formatInterval(util.now() - submitTime)
 
             info['result_css'] = "pending"
@@ -120,7 +120,7 @@ class Build(HtmlResource):
         cxt['steps'] = []
 
         for s in b.getSteps():
-            step = {'name': s.getName() }
+            step = {'name': s.getName()}
 
             if s.isFinished():
                 if s.isHidden():
@@ -142,17 +142,18 @@ class Build(HtmlResource):
 
             cxt['steps'].append(step)
 
-            link = step['link'] = path_to_build(req, b) + "/steps/%s" % urllib.quote(s.getName(), safe='')
+            link = step['link'] = path_to_build(req, b) + "/steps/%s" % urllib.quote(s.getName(),
+                                                                                     safe='')
             step['text'] = " ".join(s.getText())
-            step['urls'] = map(lambda x:dict(url=x[1],logname=x[0]), s.getURLs().items())
+            step['urls'] = map(lambda x: dict(url=x[1], logname=x[0]), s.getURLs().items())
 
-            step['logs']= []
+            step['logs'] = []
             for l in s.getLogs():
                 logname = l.getName()
                 step['logs'].append(dict(
-                    link = link + "/logs/%s" % urllib.quote(logname, safe=''),
-                    name = logname,
-                    ))
+                    link=link + "/logs/%s" % urllib.quote(logname, safe=''),
+                    name=logname,
+                ))
 
         return cxt
 
@@ -173,7 +174,7 @@ class Build(HtmlResource):
             if when is not None:
                 cxt['when'] = util.formatInterval(when)
                 cxt['when_time'] = time.strftime("%H:%M:%S",
-                                                time.localtime(time.time() + when))
+                                                 time.localtime(time.time() + when))
 
             cxt['result_css'] = "building"
         else:
@@ -221,7 +222,7 @@ class Build(HtmlResource):
                 cxt_value = unicode(value)
             else:
                 cxt_value = value
-            p = { 'name': name, 'value': cxt_value, 'source': source}
+            p = {'name': name, 'value': cxt_value, 'source': source}
             if len(cxt_value) > 500:
                 p['short_value'] = cxt_value[:500]
             ps.append(p)

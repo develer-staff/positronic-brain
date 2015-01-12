@@ -4,7 +4,7 @@
 # you may not use this file except in compliance with the License.
 # You may obtain a copy of the License at
 #
-#   http://www.apache.org/licenses/LICENSE-2.0
+# http://www.apache.org/licenses/LICENSE-2.0
 #
 # Unless required by applicable law or agreed to in writing, software
 # distributed under the License is distributed on an "AS IS" BASIS,
@@ -14,12 +14,13 @@
 
 from collections import defaultdict
 
+
 class EnvTree(defaultdict):
     def __init__(self):
         super(EnvTree, self).__init__(EnvTree)
 
-class EnvMap:
 
+class EnvMap:
     def __init__(self, labels):
         self.data = EnvTree()
         self.labels = labels

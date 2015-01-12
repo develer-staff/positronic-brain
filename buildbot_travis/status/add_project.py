@@ -4,7 +4,7 @@
 # you may not use this file except in compliance with the License.
 # You may obtain a copy of the License at
 #
-#   http://www.apache.org/licenses/LICENSE-2.0
+# http://www.apache.org/licenses/LICENSE-2.0
 #
 # Unless required by applicable law or agreed to in writing, software
 # distributed under the License is distributed on an "AS IS" BASIS,
@@ -12,15 +12,14 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from twisted.python import log
+import shelve
+import re
+
 from twisted.internet import reactor
 from buildbot.status.web.base import HtmlResource, ActionResource
 
-import os, shelve, re
-
 
 class AddProjectForm(HtmlResource):
-
     def content(self, req, cxt):
         template = req.site.buildbot_service.templates.get_template("travis.add.html")
         #return (template.render(**cxt))
@@ -28,7 +27,6 @@ class AddProjectForm(HtmlResource):
 
 
 class AddProject(ActionResource):
-
     def __init__(self, status, path):
         self.status = status
         self.path = path
@@ -41,7 +39,8 @@ class AddProject(ActionResource):
             return ((CAME_FROM, "You must specify the name of the project"))
 
         if not re.match('^[a-z0-9\-\.]+$', name):
-            return ((CAME_FROM, "Name can currently only contain a-z, 0-9, '-' and '.', and lower case will be forced for consistency"))
+            return ((CAME_FROM,
+                     "Name can currently only contain a-z, 0-9, '-' and '.', and lower case will be forced for consistency"))
 
         repository = req.args.get("repository", [""])[0].strip()
         if not repository:
@@ -51,7 +50,9 @@ class AddProject(ActionResource):
             if repository.startswith(prefix):
                 break
         else:
-            return ((CAME_FROM, "Only repos at these locations are supported at present: %s" % ",".join(self.status.allowed_projects_prefix)))
+            return ((CAME_FROM,
+                     "Only repos at these locations are supported at present: %s" % ",".join(
+                         self.status.allowed_projects_prefix)))
 
         branch = req.args.get("branch", [""])[0].strip()
         #if not branch:
@@ -66,14 +67,17 @@ class AddProject(ActionResource):
             details = shelf[p]
             if details["repository"] == repository:
                 if not branch:
-                    return ((CAME_FROM, "Repository is already defined for project '%s'" % details["name"]))
+                    return (
+                    (CAME_FROM, "Repository is already defined for project '%s'" % details["name"]))
                 if branch == details.get("branch", ""):
-                    return ((CAME_FROM, "Repository/branch pair already defined for project '%s'" % details["name"]))
+                    return ((CAME_FROM,
+                             "Repository/branch pair already defined for project '%s'" % details[
+                                 "name"]))
 
         payload = dict(
-            name = name,
-            repository = repository,
-            )
+            name=name,
+            repository=repository,
+        )
         if branch:
             payload['branch'] = branch
 

@@ -4,7 +4,7 @@
 # you may not use this file except in compliance with the License.
 # You may obtain a copy of the License at
 #
-#   http://www.apache.org/licenses/LICENSE-2.0
+# http://www.apache.org/licenses/LICENSE-2.0
 #
 # Unless required by applicable law or agreed to in writing, software
 # distributed under the License is distributed on an "AS IS" BASIS,
@@ -14,7 +14,7 @@
 
 from twisted.internet import defer
 from buildbot.status import mail
-from buildbot.status.results import FAILURE, SUCCESS, WARNINGS, EXCEPTION, Results
+from buildbot.status.results import FAILURE, SUCCESS, WARNINGS, EXCEPTION
 
 from ..factories import TravisSpawnerFactory
 from ..travisyml import TravisYml, TravisYmlInvalid
@@ -38,7 +38,7 @@ def defaultMessage(mode, name, build, results, master_status):
 
     if results == FAILURE:
         if "change" in mode and prev and prev.getResults() != results or \
-               "problem" in mode and prev and prev.getResults() != FAILURE:
+                                        "problem" in mode and prev and prev.getResults() != FAILURE:
             summary = "The build is now failing"
             tagline = "failing"
         else:
@@ -62,7 +62,6 @@ def defaultMessage(mode, name, build, results, master_status):
         tagline = "system error"
 
     subject = "[%s] %s #%s" % (tagline, name, build.number)
-
 
     text = ["Project: %s" % name]
     text.append("Build: #%s" % build.number)
@@ -89,7 +88,7 @@ def defaultMessage(mode, name, build, results, master_status):
     text.append("--")
     text.append("You can configure recipients for build notifications in your .travis.yml file.")
 
-    return { 'body': '\n'.join(text), 'type': 'plain', 'subject': subject, }
+    return {'body': '\n'.join(text), 'type': 'plain', 'subject': subject, }
 
 
 def defaultGetPreviousBuild(current_build):
@@ -104,17 +103,16 @@ def defaultGetPreviousBuild(current_build):
 
 
 class MailNotifier(mail.MailNotifier):
-
     def __init__(self, fromaddr,
-            messageFormatter=defaultMessage,
-            previousBuildGetter=defaultGetPreviousBuild,
-            **kwargs):
+                 messageFormatter=defaultMessage,
+                 previousBuildGetter=defaultGetPreviousBuild,
+                 **kwargs):
 
         self.getPreviousBuild = previousBuildGetter
 
         mail.MailNotifier.__init__(self, fromaddr,
-            messageFormatter=messageFormatter,
-            **kwargs)
+                                   messageFormatter=messageFormatter,
+                                   **kwargs)
 
     def isMailNeeded(self, build, results):
         builder = build.getBuilder()

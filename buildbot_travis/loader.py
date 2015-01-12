@@ -4,7 +4,7 @@
 # you may not use this file except in compliance with the License.
 # You may obtain a copy of the License at
 #
-#   http://www.apache.org/licenses/LICENSE-2.0
+# http://www.apache.org/licenses/LICENSE-2.0
 #
 # Unless required by applicable law or agreed to in writing, software
 # distributed under the License is distributed on an "AS IS" BASIS,
@@ -12,22 +12,22 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-import urlparse, os, shelve
+import urlparse
+import os
+import shelve
 
 from twisted.python import log
-
 from buildbot.config import BuilderConfig
 from buildbot.schedulers.triggerable import Triggerable
-from buildbot.schedulers.basic  import SingleBranchScheduler, AnyBranchScheduler
-from buildbot.changes import svnpoller, gitpoller
+from buildbot.schedulers.basic import SingleBranchScheduler, AnyBranchScheduler
+from buildbot.changes import gitpoller
 from buildbot.schedulers.filter import ChangeFilter
+from yaml import safe_load
 
 from .changes import svnpoller
 from .factories import TravisFactory, TravisSpawnerFactory
-from .mergereq import mergeRequests
 from .config import nextBuild
 
-from yaml import safe_load
 
 def fileIsImportant(change):
     # Ignore "branch created"
@@ -55,7 +55,6 @@ def fileIsImportant(change):
 
 
 class SVNChangeSplitter(object):
-
     def __init__(self, repository):
         self.repository = repository
         self.roots = []
@@ -102,7 +101,6 @@ class SVNChangeSplitter(object):
 
 
 class Loader(object):
-
     def __init__(self, config, vardir):
         self.config = config
         self.vardir = vardir
@@ -128,15 +126,19 @@ class Loader(object):
 
     def get_spawner_slaves(self):
         from buildbot.buildslave import BuildSlave
+
         slaves = [s.slavename for s in self.config['slaves'] if isinstance(s, BuildSlave)]
         return slaves
 
     def get_runner_slaves(self):
         from buildbot.buildslave import AbstractLatentBuildSlave
-        slaves = [s.slavename for s in self.config['slaves'] if isinstance(s, AbstractLatentBuildSlave)]
+
+        slaves = [s.slavename for s in self.config['slaves'] if
+                  isinstance(s, AbstractLatentBuildSlave)]
         return slaves
 
-    def define_travis_builder(self, name, repository, branch=None, vcs_type=None, username=None, password=None, subrepos=None):
+    def define_travis_builder(self, name, repository, branch=None, vcs_type=None, username=None,
+                              password=None, subrepos=None):
         job_name = "%s-job" % name
         spawner_name = name
 
@@ -156,69 +158,70 @@ class Loader(object):
 
         # Define the builder for the main job
         self.config['builders'].append(BuilderConfig(
-            name = job_name,
-            slavenames = self.get_runner_slaves(),
-            properties = self.properties,
+            name=job_name,
+            slavenames=self.get_runner_slaves(),
+            properties=self.properties,
             #mergeRequests = mergeRequests,
-            mergeRequests = False,
-            env = dict(
-                DEBIAN_FRONTEND = "noninteractive",
-                CI = "true",
-                TRAVIS = "true",
-                HAS_JOSH_K_SEAL_OF_APPROVAL = "true",
-                LANG = "en_GB.UTF-8",
-                LC_ALL = "en_GB.UTF-8",
-                ),
-            factory = TravisFactory(
-                projectname = spawner_name,
-                repository = repository,
-                branch = branch,
-                vcs_type = vcs_type,
-                username = username,
-                password = password,
-                subrepos = subrepos,
-                ),
-             ))
+            mergeRequests=False,
+            env=dict(
+                DEBIAN_FRONTEND="noninteractive",
+                CI="true",
+                TRAVIS="true",
+                HAS_JOSH_K_SEAL_OF_APPROVAL="true",
+                LANG="en_GB.UTF-8",
+                LC_ALL="en_GB.UTF-8",
+            ),
+            factory=TravisFactory(
+                projectname=spawner_name,
+                repository=repository,
+                branch=branch,
+                vcs_type=vcs_type,
+                username=username,
+                password=password,
+                subrepos=subrepos,
+            ),
+        ))
 
         self.config['schedulers'].append(Triggerable(
             name=job_name,
             builderNames=[job_name],
             codebases=codebases,
-            ))
+        ))
 
 
         # Define the builder for a spawer
         self.config['builders'].append(BuilderConfig(
-            name = spawner_name,
-            nextBuild = nextBuild,
-            slavenames = self.get_spawner_slaves(),
-            properties = self.properties,
-            category = "spawner",
-            factory = TravisSpawnerFactory(
-                projectname = spawner_name,
-                repository = repository,
-                branch = branch,
-                scheduler = job_name,
-                vcs_type = vcs_type,
-                username = username,
-                password = password,
-                ),
-            ))
+            name=spawner_name,
+            nextBuild=nextBuild,
+            slavenames=self.get_spawner_slaves(),
+            properties=self.properties,
+            category="spawner",
+            factory=TravisSpawnerFactory(
+                projectname=spawner_name,
+                repository=repository,
+                branch=branch,
+                scheduler=job_name,
+                vcs_type=vcs_type,
+                username=username,
+                password=password,
+            ),
+        ))
 
-        SchedulerKlass = {True:SingleBranchScheduler, False:AnyBranchScheduler}[bool(branch)]
+        SchedulerKlass = {True: SingleBranchScheduler, False: AnyBranchScheduler}[bool(branch)]
 
         self.config['schedulers'].append(SchedulerKlass(
-            name = spawner_name,
-            builderNames = [spawner_name],
-            change_filter = ChangeFilter(project=name),
-            onlyImportant = True,
-            fileIsImportant = fileIsImportant,
+            name=spawner_name,
+            builderNames=[spawner_name],
+            change_filter=ChangeFilter(project=name),
+            onlyImportant=True,
+            fileIsImportant=fileIsImportant,
             codebases=codebases,
-            ))
+        ))
 
         self.setup_poller(repository, vcs_type, branch, name, username, password)
 
-    def setup_poller(self, repository, vcs_type=None, branch=None, project=None, username=None, password=None):
+    def setup_poller(self, repository, vcs_type=None, branch=None, project=None, username=None,
+                     password=None):
         if not vcs_type:
             if repository.startswith("https://svn."):
                 vcs_type = "svn"
@@ -240,20 +243,21 @@ class Loader(object):
     def setup_git_poller(self, repository, branch, project, username=None, password=None):
         pollerdir = self.make_poller_dir(project)
         self.config['change_source'].append(gitpoller.GitPoller(
-            repourl = repository,
-            workdir = pollerdir,
-            project = project,
-            ))
+            repourl=repository,
+            workdir=pollerdir,
+            project=project,
+        ))
 
     def get_repository_root(self, repository, username=None, password=None):
         import subprocess
+
         options = {}
         cmd = ["svn", "info", repository, "--non-interactive"]
         if username:
             cmd.extend(["--username", username])
         if password:
             cmd.extend(["--password", password])
-        p = subprocess.Popen(cmd, stdout=subprocess.PIPE, env={'LC_MESSAGES':'C'})
+        p = subprocess.Popen(cmd, stdout=subprocess.PIPE, env={'LC_MESSAGES': 'C'})
         s, e = p.communicate()
         for line in s.split("\n"):
             if ":" in line:
@@ -272,18 +276,19 @@ class Loader(object):
             repo = self.get_repository_root(repository, username, password)
 
             scheme, netloc, path, params, query, fragment = urlparse.urlparse(repo)
-            name = "%s-%s-%s" % (scheme, netloc.replace(".", "-"), path.rstrip("/").lstrip("/").replace("/", "-"))
+            name = "%s-%s-%s" % (
+            scheme, netloc.replace(".", "-"), path.rstrip("/").lstrip("/").replace("/", "-"))
             pollerdir = self.make_poller_dir(name)
 
             splitter = self.repositories[repo] = SVNChangeSplitter(repo)
 
             self.config['change_source'].append(svnpoller.SVNPoller(
-                svnurl = repo,
-                cachepath = os.path.join(pollerdir, "pollerstate"),
-                project = None,
-                split_file = splitter,
-                svnuser = username,
-                svnpasswd = password,
-                ))
+                svnurl=repo,
+                cachepath=os.path.join(pollerdir, "pollerstate"),
+                project=None,
+                split_file=splitter,
+                svnuser=username,
+                svnpasswd=password,
+            ))
 
         splitter.add(repository, branch, project)

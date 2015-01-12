@@ -4,7 +4,7 @@
 # you may not use this file except in compliance with the License.
 # You may obtain a copy of the License at
 #
-#   http://www.apache.org/licenses/LICENSE-2.0
+# http://www.apache.org/licenses/LICENSE-2.0
 #
 # Unless required by applicable law or agreed to in writing, software
 # distributed under the License is distributed on an "AS IS" BASIS,
@@ -17,6 +17,8 @@ from ..steps import TravisSetupSteps
 
 
 class TravisFactory(BaseFactory):
-    def __init__(self, projectname, repository, vcs_type=None, branch=None, username=None, password=None, subrepos=None):
-        BaseFactory.__init__(self, projectname, repository, vcs_type=vcs_type, branch=branch, username=username, password=password, subrepos=subrepos)
+    def __init__(self, projectname, repository, vcs_type=None, branch=None, username=None,
+                 password=None, subrepos=None):
+        BaseFactory.__init__(self, projectname, repository, vcs_type=vcs_type, branch=branch,
+                             username=username, password=password, subrepos=subrepos)
         self.addStep(TravisSetupSteps())

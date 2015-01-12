@@ -4,7 +4,7 @@
 # you may not use this file except in compliance with the License.
 # You may obtain a copy of the License at
 #
-#   http://www.apache.org/licenses/LICENSE-2.0
+# http://www.apache.org/licenses/LICENSE-2.0
 #
 # Unless required by applicable law or agreed to in writing, software
 # distributed under the License is distributed on an "AS IS" BASIS,
@@ -15,9 +15,7 @@
 import re
 
 from twisted.internet import defer
-from twisted.python import log
-from buildbot.process import buildstep
-from buildbot.process.buildstep import SUCCESS, FAILURE
+from buildbot.process.buildstep import SUCCESS
 from buildbot.steps import shell
 
 from .base import ConfigurableStep
@@ -25,7 +23,6 @@ from ..travisyml import TRAVIS_HOOKS
 
 
 class ShellCommand(shell.ShellCommand):
-
     flunkOnFailure = True
     haltOnFailure = True
     warnOnWarnings = True
@@ -66,7 +63,9 @@ class ShellCommand(shell.ShellCommand):
         #     Ran 24 tests with 0 failures and 0 errors in 0.009 seconds
 
         if not hastests:
-            outputs = re.findall("Ran (?P<count>[\d]+) tests with (?P<fail>[\d]+) failures and (?P<error>[\d]+) errors", stdio)
+            outputs = re.findall(
+                "Ran (?P<count>[\d]+) tests with (?P<fail>[\d]+) failures and (?P<error>[\d]+) errors",
+                stdio)
             for output in outputs:
                 total += int(output[0])
                 fails += int(output[1])
@@ -107,15 +106,17 @@ class ShellCommand(shell.ShellCommand):
 
         if not hastests:
             fails += len(re.findall('FAIL:', stdio))
-            errors += len(re.findall('======================================================================\nERROR:', stdio))
+            errors += len(re.findall(
+                '======================================================================\nERROR:',
+                stdio))
             for number in re.findall("Ran (?P<count>[\d]+)", stdio):
                 total += int(number)
                 hastests = True
 
 
-	# We work out passed at the end because most test runners dont tell us
-	# and we can't distinguish between different test systems easily so we
-	# might double count.
+        # We work out passed at the end because most test runners dont tell us
+        # and we can't distinguish between different test systems easily so we
+        # might double count.
         passed = total - (skipped + fails + errors + warnings)
 
         # Update the step statistics with out shiny new totals
@@ -147,7 +148,6 @@ class ShellCommand(shell.ShellCommand):
 
 
 class TravisSetupSteps(ConfigurableStep):
-
     name = "setup-steps"
     haltOnFailure = True
     flunkOnFailure = True
@@ -161,10 +161,10 @@ class TravisSetupSteps(ConfigurableStep):
         b = self.build
 
         step = ShellCommand(
-            name = name,
-            description = command,
-            command = ['/bin/bash', '-c', command],
-            )
+            name=name,
+            description=command,
+            command=['/bin/bash', '-c', command],
+        )
 
         step.setBuild(b)
         step.setBuildSlave(b.slavebuilder.slave)
@@ -183,9 +183,9 @@ class TravisSetupSteps(ConfigurableStep):
         for k in TRAVIS_HOOKS:
             for i, command in enumerate(getattr(config, k)):
                 self.addShellCommand(
-                    name = "travis_"+k+str(i),
-                    command = command,
-                    )
+                    name="travis_" + k + str(i),
+                    command=command,
+                )
 
         self.finished(SUCCESS)
         defer.returnValue(None)

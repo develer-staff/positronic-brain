@@ -4,7 +4,7 @@
 # you may not use this file except in compliance with the License.
 # You may obtain a copy of the License at
 #
-#   http://www.apache.org/licenses/LICENSE-2.0
+# http://www.apache.org/licenses/LICENSE-2.0
 #
 # Unless required by applicable law or agreed to in writing, software
 # distributed under the License is distributed on an "AS IS" BASIS,
@@ -12,26 +12,19 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from twisted.web import static
+import os
+
 from twisted.web.util import Redirect
 from twisted.application import strports
 from twisted.internet.protocol import Factory
-from twisted.internet import defer
-from twisted.python import log
-from twisted.internet import reactor
-
 from buildbot.status.web import baseweb
 
 from . import websocketstatus
-
 from .add_project import AddProjectForm, AddProject
-from .project import Projects, ProjectStatus, About
-
-import os, re
+from .project import Projects, About
 
 
 class CiWebStatus(baseweb.WebStatus):
-
     allowed_projects_prefix = []
 
     def __init__(self, *args, **kwargs):
@@ -49,6 +42,7 @@ class CiWebStatus(baseweb.WebStatus):
 
     def setupWebsocket(self, status):
         from txws import WebSocketFactory
+
         f = Factory()
         f.protocol = websocketstatus.WSBuildHandler
         f.status = status

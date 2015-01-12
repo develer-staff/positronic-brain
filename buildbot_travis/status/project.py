@@ -4,7 +4,7 @@
 # you may not use this file except in compliance with the License.
 # You may obtain a copy of the License at
 #
-#   http://www.apache.org/licenses/LICENSE-2.0
+# http://www.apache.org/licenses/LICENSE-2.0
 #
 # Unless required by applicable law or agreed to in writing, software
 # distributed under the License is distributed on an "AS IS" BASIS,
@@ -12,30 +12,16 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-import time
-import operator
-import re
-import urllib
-
 from twisted.internet import defer
-from twisted.python import log
-
-from buildbot import util
-from buildbot.status import builder
 from buildbot.status.web.base import HtmlResource
-from buildbot.changes import changes
-from buildbot.status.web.base import path_to_build
 from buildbot.status.results import SUCCESS
 
 from buildbot_travis.factories import TravisSpawnerFactory
-from buildbot_travis.travisyml import TravisYml, TravisYmlInvalid
-
 from .build import Build
 from .delete_project import DeleteProject
 
 
 class ProjectStatus(HtmlResource):
-
     def __init__(self, project):
         HtmlResource.__init__(self)
         self.project = project
@@ -49,10 +35,10 @@ class ProjectStatus(HtmlResource):
 
     def getBuild(self, req, build):
         result = dict(
-            revisions = build.getChanges(),
-            properties = build.getProperties().asDict(),
-            number = build.number,
-            )
+            revisions=build.getChanges(),
+            properties=build.getProperties().asDict(),
+            number=build.number,
+        )
 
         if not build.isFinished():
             result['color'] = 'building'
@@ -85,14 +71,14 @@ class ProjectStatus(HtmlResource):
             if source.changes:
                 last = source.changes[-1]
                 info = dict(
-                    revision = last.revision,
-                    comments = last.comments,
-                    )
+                    revision=last.revision,
+                    comments=last.comments,
+                )
             else:
                 info = dict(
-                    revision = "HEAD",
-                    comments = "Pending manual build",
-                    )
+                    revision="HEAD",
+                    comments="Pending manual build",
+                )
             builds.append(info)
         defer.returnValue(builds)
 
@@ -123,7 +109,6 @@ class ProjectStatus(HtmlResource):
 
 
 class Projects(HtmlResource):
-
     def getBuilders(self, req):
         status = self.getStatus(req)
         for name in status.botmaster.builderNames:
@@ -172,7 +157,6 @@ class Projects(HtmlResource):
 
 
 class About(HtmlResource):
-
     def content(self, req, cxt):
         templates = req.site.buildbot_service.templates
         template = templates.get_template("about.html")

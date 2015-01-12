@@ -4,7 +4,7 @@
 # you may not use this file except in compliance with the License.
 # You may obtain a copy of the License at
 #
-#   http://www.apache.org/licenses/LICENSE-2.0
+# http://www.apache.org/licenses/LICENSE-2.0
 #
 # Unless required by applicable law or agreed to in writing, software
 # distributed under the License is distributed on an "AS IS" BASIS,
@@ -16,15 +16,14 @@ from twisted.trial import unittest
 
 from buildbot_travis.travisyml import TravisYml, TravisYmlInvalid
 
-class TravisYmlTestCase(unittest.TestCase):
 
+class TravisYmlTestCase(unittest.TestCase):
     def setUp(self):
         self.t = TravisYml()
         self.t.config = {}
 
 
 class TestEnv(TravisYmlTestCase):
-
     def test_noenv(self):
         self.t.parse_envs()
         self.failUnlessEqual(self.t.environments, [{}])
@@ -35,7 +34,8 @@ class TestEnv(TravisYmlTestCase):
         self.failUnlessEqual(self.t.environments, [dict(FOO='1', BAR='2')])
 
         self.t.parse_matrix()
-        self.failUnlessEqual(self.t.matrix, [dict(python="python2.6", env=dict(FOO='1', BAR='2')), ])
+        self.failUnlessEqual(self.t.matrix,
+                             [dict(python="python2.6", env=dict(FOO='1', BAR='2')), ])
 
     def test_multienv(self):
         self.t.config["env"] = ["FOO=1 BAR=2", "FOO=2 BAR=1"]
@@ -46,11 +46,10 @@ class TestEnv(TravisYmlTestCase):
         self.failUnlessEqual(self.t.matrix, [
             dict(python="python2.6", env=dict(FOO='1', BAR='2')),
             dict(python="python2.6", env=dict(FOO='2', BAR='1')),
-            ])
+        ])
 
 
 class TestMatrix(TravisYmlTestCase):
-
     def test_exclude_match(self):
         self.t.config["env"] = ["FOO=1 BAR=2", "FOO=2 BAR=1"]
         m = self.t.config["matrix"] = {}
@@ -61,7 +60,7 @@ class TestMatrix(TravisYmlTestCase):
 
         self.failUnlessEqual(self.t.matrix, [
             dict(python="python2.6", env=dict(FOO='1', BAR='2')),
-            ])
+        ])
 
     def test_exclude_nomatch(self):
         self.t.config["env"] = ["FOO=1 BAR=2", "FOO=2 BAR=1"]
@@ -74,7 +73,7 @@ class TestMatrix(TravisYmlTestCase):
         self.failUnlessEqual(self.t.matrix, [
             dict(python="python2.6", env=dict(FOO='1', BAR='2')),
             dict(python="python2.6", env=dict(FOO='2', BAR='1')),
-            ])
+        ])
 
     def test_include(self):
         self.t.config["env"] = ["FOO=1 BAR=2", "FOO=2 BAR=1"]
@@ -88,11 +87,10 @@ class TestMatrix(TravisYmlTestCase):
             dict(python="python2.6", env=dict(FOO='1', BAR='2')),
             dict(python="python2.6", env=dict(FOO='2', BAR='1')),
             dict(python="python2.6", env=dict(FOO='2', BAR='3')),
-            ])
+        ])
 
 
 class TestHooks(TravisYmlTestCase):
-
     def test_empty(self):
         self.t.parse_hooks()
         self.failUnlessEqual(self.t.before_install, [])
@@ -114,7 +112,6 @@ class TestHooks(TravisYmlTestCase):
 
 
 class TestBranches(TravisYmlTestCase):
-
     def test_nobranches(self):
         self.t.parse_branches()
         self.failUnlessEqual(self.t.branch_whitelist, None)
@@ -155,7 +152,6 @@ class TestBranches(TravisYmlTestCase):
 
 
 class TestMailNotifications(TravisYmlTestCase):
-
     def test_nomail(self):
         self.t.parse_notifications_email()
         self.assertEqual(self.t.email.enabled, True)
@@ -196,16 +192,15 @@ class TestMailNotifications(TravisYmlTestCase):
 
 
 class TestIrcNotifications(TravisYmlTestCase):
-
     def test_noirc(self):
         self.t.parse_notifications_irc()
         self.assertEqual(self.t.irc.enabled, False)
 
     def test_channels(self):
-        channels=[
+        channels = [
             "irc.freenode.org#travis",
             "irc.freenode.org#some-other-channel"
-            ]
+        ]
 
         n = self.t.config["notifications"] = {}
         n["irc"] = dict(channels=channels[:])

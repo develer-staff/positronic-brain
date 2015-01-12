@@ -4,7 +4,7 @@
 # you may not use this file except in compliance with the License.
 # You may obtain a copy of the License at
 #
-#   http://www.apache.org/licenses/LICENSE-2.0
+# http://www.apache.org/licenses/LICENSE-2.0
 #
 # Unless required by applicable law or agreed to in writing, software
 # distributed under the License is distributed on an "AS IS" BASIS,
@@ -13,9 +13,12 @@
 # limitations under the License.
 
 import re
+
 from yaml import safe_load
 
-TRAVIS_HOOKS = ("before_install", "install", "after_install", "before_script", "script", "after_script")
+
+TRAVIS_HOOKS = (
+"before_install", "install", "after_install", "before_script", "script", "after_script")
 
 
 class TravisYmlInvalid(Exception):
@@ -123,9 +126,9 @@ class TravisYml(object):
         for lang in self.config.get("python", ["python2.6"]):
             for env in self.environments:
                 matrix.append(dict(
-                    python = lang,
-                    env = env,
-                    ))
+                    python=lang,
+                    env=env,
+                ))
 
         cfg = self.config.get("matrix", {})
 
@@ -137,7 +140,7 @@ class TravisYml(object):
 
         for env in cfg.get("include", []):
             e = env.copy()
-            e['env'] = parse_env_string(e.get('env',''))
+            e['env'] = parse_env_string(e.get('env', ''))
             matrix.append(e)
 
         self.matrix = matrix
@@ -173,7 +176,6 @@ class TravisYml(object):
 
 
 class _NotificationsMixin(object):
-
     def parse_failure_success(self, settings):
         self.success = settings.get("on_success", self.success)
         if not self.success in ("always", "never", "change"):
@@ -185,7 +187,6 @@ class _NotificationsMixin(object):
 
 
 class TravisYmlEmail(_NotificationsMixin):
-
     def __init__(self):
         self.enabled = True
         self.addresses = []
@@ -202,7 +203,8 @@ class TravisYmlEmail(_NotificationsMixin):
             return
 
         if not isinstance(settings, dict):
-            raise TravisYmlInvalid("Exepected a False, a list of addresses or a dictionary at noficiations.email")
+            raise TravisYmlInvalid(
+                "Exepected a False, a list of addresses or a dictionary at noficiations.email")
 
         self.addresses = settings.get("recipients", self.addresses)
 
@@ -210,7 +212,6 @@ class TravisYmlEmail(_NotificationsMixin):
 
 
 class TravisYmlIrc(_NotificationsMixin):
-
     def __init__(self):
         self.enabled = False
         self.channels = []

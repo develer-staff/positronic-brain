@@ -4,7 +4,7 @@
 # you may not use this file except in compliance with the License.
 # You may obtain a copy of the License at
 #
-#   http://www.apache.org/licenses/LICENSE-2.0
+# http://www.apache.org/licenses/LICENSE-2.0
 #
 # Unless required by applicable law or agreed to in writing, software
 # distributed under the License is distributed on an "AS IS" BASIS,
@@ -15,21 +15,24 @@
 from buildbot.process import factory
 from buildbot.steps.source import SVN, Git
 
+
 class BaseFactory(factory.BuildFactory):
     """
     Generic factory that deals with SVN (or Git)
     """
 
-    def __init__(self, projectname, repository, vcs_type=None, branch=None, username=None, password=None, subrepos=None):
+    def __init__(self, projectname, repository, vcs_type=None, branch=None, username=None,
+                 password=None, subrepos=None):
         factory.BuildFactory.__init__(self, [])
         self.addRepository(projectname, repository, vcs_type, branch, username, password)
         if subrepos:
             for subrepo in subrepos:
                 self.addRepository(
                     **subrepo
-                    )
+                )
 
-    def addRepository(self, project=None, repository=None, vcs_type=None, branch=None, username=None, password=None, **kwargs):
+    def addRepository(self, project=None, repository=None, vcs_type=None, branch=None,
+                      username=None, password=None, **kwargs):
         kwargs = dict(kwargs)
 
         if not repository.endswith("/"):
@@ -51,7 +54,7 @@ class BaseFactory(factory.BuildFactory):
                 username=username,
                 password=password,
                 codebase=project,
-                ))
+            ))
 
             self.addStep(SVN(**kwargs))
 
@@ -60,6 +63,6 @@ class BaseFactory(factory.BuildFactory):
                 repourl=repository,
                 branch=branch,
                 codebase=project,
-                ))
+            ))
 
             self.addStep(Git(**kwargs))
