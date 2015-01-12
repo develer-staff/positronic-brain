@@ -30,6 +30,7 @@ from buildbot.status.mail import MailNotifier
 from buildbot.status.web.authz import Authz
 
 from buildbot_travis.status import CiWebStatus
+from buildbot_travis import Loader
 
 from positronic.brain.config import BrainConfig, BuildmasterConfig
 from positronic.brain.mail import html_message_formatter
@@ -93,6 +94,11 @@ def master(basedir, url, admins=None, email_from=None, title='BuildBot', listen_
         'ssdicts': 20,
         'usdicts': 100,
     }
+
+    # Add a "master" slave, this one is used to check-out the project's repo in order to read
+    # .travis.yml and trigger the build on slave nodes. This slave runs on the same machine as the
+    # master, thus, no password needed.
+    worker('spawner', '')
 
     # Load project definitions
     loader = Loader(BuildmasterConfig, os.path.join(basedir, "var"))

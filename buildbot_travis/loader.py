@@ -121,14 +121,10 @@ class Loader(object):
                 self.define_travis_builder(**p)
 
     def get_spawner_slaves(self):
-        slaves = [s.slavename for s in self.config['slaves'] if isinstance(s, BuildSlave)]
-        return slaves
+        return ['spawner']
 
     def get_runner_slaves(self):
-
-        slaves = [s.slavename for s in self.config['slaves'] if
-                  isinstance(s, AbstractLatentBuildSlave)]
-        return slaves
+        return [s.slavename for s in self.config['slaves'] if s.slavename is not 'spawner']
 
     def define_travis_builder(self, name, repository, branch=None, vcs_type=None, username=None,
                               password=None, subrepos=None):
