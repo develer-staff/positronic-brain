@@ -115,9 +115,10 @@ class Loader(object):
     def add_password(self, scheme, netloc, username, password):
         self.passwords[(scheme, netloc)] = (username, password)
 
-    def load(self, path):
-        for p in safe_load(path).get("projects", []):
-            self.define_travis_builder(**p)
+    def load(self, config_path):
+        with open(config_path, "r") as config:
+            for p in safe_load(config).get("projects", []):
+                self.define_travis_builder(**p)
 
     def get_spawner_slaves(self):
         slaves = [s.slavename for s in self.config['slaves'] if isinstance(s, BuildSlave)]
