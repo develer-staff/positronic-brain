@@ -94,6 +94,10 @@ def master(basedir, url, admins=None, email_from=None, title='BuildBot', listen_
         'usdicts': 100,
     }
 
+    # Load project definitions
+    loader = Loader(BuildmasterConfig, os.path.join(basedir, "var"))
+    loader.load("projects.yml")
+
     # Launches the web interface with no authentication by default, allowing all users to start and
     # stop builds.
     BuildmasterConfig['status'] = [
