@@ -18,8 +18,6 @@ import subprocess
 
 from twisted.python import log
 from buildbot.config import BuilderConfig
-from buildbot.buildslave import AbstractLatentBuildSlave
-from buildbot.buildslave import BuildSlave
 from buildbot.schedulers.triggerable import Triggerable
 from buildbot.schedulers.basic import SingleBranchScheduler, AnyBranchScheduler
 from buildbot.changes import gitpoller
