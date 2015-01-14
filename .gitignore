@@ -4,10 +4,18 @@
 *.fuse*
 
 .idea/
+
 config-templates/master/*.log
-config-templates/master/buildbot_travis/
+config-templates/master/*.pid
 config-templates/master/buildbot_travis-job/
+config-templates/master/buildbot_travis/
 config-templates/master/var
+
+config-templates/spawner/*.log
+config-templates/spawner/*.pid
+
+config-templates/worker/*.log
+config-templates/worker/*.pid
 
 .coverage
 coverage.xml
