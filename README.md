@@ -1,3 +1,4 @@
+[![Stories in Ready](https://badge.waffle.io/develersrl/positronic-brain.png?label=ready&title=Ready)](https://waffle.io/develersrl/positronic-brain)
 Positronic Brain
 ================
 
